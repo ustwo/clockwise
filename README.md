@@ -1,2 +1,2 @@
-# US2-Clockwork
+# US2-Clockwise
 Framework for creation of Android Wear watch faces 
