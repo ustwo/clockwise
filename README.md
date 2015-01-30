@@ -22,10 +22,7 @@ git clone https://github.com/ustwo/Clockwise.git
 
 #### Wearable Library  
 
-_Coming Soon To Maven…_  
-
-<!--
-Download Latest JAR => [clockwise-wearable.jar][2]  
+Download Latest AAR => [clockwise-wearable.aar][5]  
 
 Gradle =>  
 ```groovy
@@ -39,8 +36,7 @@ Maven =>
   <version>x.y.z</version>
 </dependency>
 ```
-Binary History => [Maven Central Repository][3]
--->
+Binary History => [Maven Central Repository][6]
 
 #### Mobile Library  
 
@@ -48,14 +44,14 @@ _Coming Soon…_
 
 ## Releases
 
-Release Notes => [RELEASES.md][5]  
+Release Notes => [RELEASES.md][7]  
 Binary History => [Maven Central Repository][6]
 
 ## About ![ustwo](https://media.licdn.com/media/p/4/005/02e/351/2f4017d.png)
 
 ustwo developed the first watch faces on the Android Wear platform, and in doing so, identified the benefit of extending the existing watch face API into an open source framework.
 
-ustwo plans to start accepting pull requests for this repo in the near future. In the meantime, please continue to utilize [GitHub Issues][7] and email us at [clockwise@ustwo.com][8] with any and all feedback. We would love to hear your thoughts on how we can improve Clockwise!  
+ustwo plans to start accepting pull requests for this repo in the near future. In the meantime, please continue to utilize [GitHub Issues][8] and email us at [clockwise@ustwo.com][9] with any and all feedback. We would love to hear your thoughts on how we can improve Clockwise!  
 
 ## License
 
@@ -86,7 +82,8 @@ ustwo plans to start accepting pull requests for this repo in the near future. I
 [2]:http://wear.ustwo.com
 [3]:https://developer.android.com/design/wear/watchfaces.html
 [4]:https://github.com/ustwo/Clockwise/wiki/
-[5]:https://github.com/ustwo/Clockwise/blob/master/RELEASES.md
+[5]:https://repo1.maven.org/maven2/com/ustwo/android/clockwise-wearable/1.0.0/clockwise-wearable-1.0.0.aar
 [6]:http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.ustwo.android%22%20AND%20a%3A%22clockwise-wearable%22
-[7]:https://github.com/ustwo/Clockwise/issues
-[8]:mailto:clockwise@ustwo.com
+[7]:https://github.com/ustwo/Clockwise/blob/master/RELEASES.md
+[8]:https://github.com/ustwo/Clockwise/issues
+[9]:mailto:clockwise@ustwo.com
