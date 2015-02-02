@@ -82,7 +82,7 @@ ustwo plans to start accepting pull requests for this repo in the near future. I
 [2]:http://wear.ustwo.com
 [3]:https://developer.android.com/design/wear/watchfaces.html
 [4]:https://github.com/ustwo/Clockwise/wiki/
-[5]:https://repo1.maven.org/maven2/com/ustwo/android/clockwise-wearable/1.0.0/clockwise-wearable-1.0.0.aar
+[5]:https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.ustwo.android&a=clockwise-wearable&p=aar&v=LATEST
 [6]:http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.ustwo.android%22%20AND%20a%3A%22clockwise-wearable%22
 [7]:https://github.com/ustwo/Clockwise/blob/master/RELEASES.md
 [8]:https://github.com/ustwo/Clockwise/issues
