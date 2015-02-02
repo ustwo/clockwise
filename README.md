@@ -19,7 +19,7 @@ Binary History => [Maven Central Repository][6]
 
 ustwo developed the first watch faces on the Android Wear platform, and in doing so, identified the benefit of extending the existing watch face API into an open source framework.
 
-ustwo plans to start accepting pull requests for this repo in the near future. In the meantime, please continue to utilize [GitHub Issues][8] and email us at [clockwise@ustwo.com][9] with any and all feedback. We would love to hear your thoughts on how we can improve Clockwise!  
+If you would like to contribute to Clockwise, please feel free to fork the repository and submit pull requests. When submitting code, please be sure to follow the [Android Code Style Guidelines][10]. Also, please continue to utilize [GitHub Issues][8] and email us at [clockwise@ustwo.com][9] with any and all feedback. We would love to hear your thoughts on how we can improve Clockwise!  
 
 ## License
 
@@ -55,3 +55,4 @@ ustwo plans to start accepting pull requests for this repo in the near future. I
 [7]:https://github.com/ustwo/Clockwise/blob/master/RELEASES.md
 [8]:https://github.com/ustwo/Clockwise/issues
 [9]:mailto:clockwise@ustwo.com
+[10]:https://source.android.com/source/code-style.html
