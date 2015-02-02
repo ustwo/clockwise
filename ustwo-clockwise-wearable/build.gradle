@@ -27,18 +27,12 @@ apply plugin: 'maven-publish'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '20.0.0'
+    buildToolsVersion "21.1.2"
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 20
         targetSdkVersion 21
         versionCode + VERSION_CODE
         versionName "'" + VERSION_NAME + "'"
-    }
-
-    lintOptions {
-        abortOnError false
-    }
-    productFlavors {
     }
 }
 
@@ -50,6 +44,6 @@ repositories {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.google.android.gms:play-services-wearable:6.5.+'
-    compile 'com.google.android.support:wearable:1.1.+'
+    compile 'com.google.android.gms:play-services-wearable:6.5.87'
+    compile 'com.google.android.support:wearable:1.1.0'
 }
