@@ -1,4 +1,4 @@
-package com.ustwo.clockwise.test;
+package com.ustwo.clockwise;
 
 import android.graphics.PointF;
 

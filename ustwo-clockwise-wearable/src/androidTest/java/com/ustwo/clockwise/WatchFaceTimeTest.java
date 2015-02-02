@@ -1,6 +1,4 @@
-package com.ustwo.clockwise.test;
-
-import com.ustwo.clockwise.WatchFaceTime;
+package com.ustwo.clockwise;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
