@@ -4,43 +4,11 @@ Clockwise is a watch face framework for Android Wear developed by ustwo. It exte
 
 ### Background  
 
-ustwo worked with Google to develop the [first watch faces on the Android Wear platform][2], and in doing so, we learned a great deal and identified the benefit of extending the existing watch face API into an open source framework. The purpose of Clockwise is to help developers more easily consider the inherent nuances in developing watch faces on the Android Wear platform, including varying hardware specifications and battery life conservation. The goal is that by utilizing the Clockwise development framework in conjunction with the [Watch Face design guidelines][3] (also created by ustwo), developers can enhance the user's experience on Android Wear.
+ustwo worked with Google to develop the [first watch faces on the Android Wear platform][2], and in doing so, we learned a great deal and identified the benefit of extending the existing watch face API into an open source framework. The purpose of Clockwise is to help developers more easily consider the inherent nuances in developing watch faces on the Android Wear platform, including varying hardware specifications and battery life conservation. The goal is that by utilizing the Clockwise development framework in conjunction with the [Watch Face design guidelines][3] (also created by ustwo), developers can enhance the user's experience on Android Wear.  
 
-For more details, full documentation, and code samples, please see the [Clockwise Wiki][4].
+### Getting Started  
 
-### Integrate Clockwise  
-
-Once you have your environment setup to start developing watch faces, you can then use one of the following methods to integrate the Clockwise framework into your project:
-
-#### Source Code  
-
-Clone repository =>  
-
-```
-git clone https://github.com/ustwo/Clockwise.git
-```  
-
-#### Wearable Library  
-
-Download Latest AAR => [clockwise-wearable.aar][5]  
-
-Gradle =>  
-```groovy
-compile 'com.ustwo.android:clockwise-wearable:x.y.z'
-```
-Maven =>
-```xml
-<dependency>
-  <groupId>com.ustwo.android</groupId>
-  <artifactId>clockwise-wearable</artifactId>
-  <version>x.y.z</version>
-</dependency>
-```
-Binary History => [Maven Central Repository][6]
-
-#### Mobile Library  
-
-_Coming Soon…_  
+Have a look at the [Clockwise Wiki][4] for more details on how to integrate Clockwise as well as full documentation and code samples.  
 
 ## Releases
 
@@ -81,7 +49,7 @@ ustwo plans to start accepting pull requests for this repo in the near future. I
 [1]:https://developer.android.com/training/wearables/watch-faces/index.html
 [2]:http://wear.ustwo.com
 [3]:https://developer.android.com/design/wear/watchfaces.html
-[4]:https://github.com/ustwo/Clockwise/wiki/
+[4]:https://github.com/ustwo/clockwise/wiki/Getting-Started
 [5]:https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.ustwo.android&a=clockwise-wearable&p=aar&v=LATEST
 [6]:http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.ustwo.android%22%20AND%20a%3A%22clockwise-wearable%22
 [7]:https://github.com/ustwo/Clockwise/blob/master/RELEASES.md
