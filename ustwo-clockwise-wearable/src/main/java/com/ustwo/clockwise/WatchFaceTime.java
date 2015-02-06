@@ -50,9 +50,8 @@ public class WatchFaceTime extends Time {
 
     @Override
     public void setToNow() {
-        super.setToNow();
-        setMillis(System.currentTimeMillis());
-        setHour12();
+        long millis = System.currentTimeMillis();
+        set(millis);
     }
 
     public void set(WatchFaceTime that) {
@@ -83,7 +82,7 @@ public class WatchFaceTime extends Time {
     }
 
     private void setMillis(long millis) {
-        this.millis = (int)millis % 1000;
+        this.millis = (int)(millis % 1000l);
     }
 
     private void setHour12() {
