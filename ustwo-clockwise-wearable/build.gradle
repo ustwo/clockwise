@@ -47,4 +47,5 @@ dependencies {
     compile 'com.google.android.support:wearable:1.1.0'
 }
 
-apply from: '../maven_local.gradle'
+apply from: '../gradle/maven_local.gradle'
+apply from: '../gradle/maven_central.gradle'
