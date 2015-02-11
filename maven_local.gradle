@@ -22,17 +22,14 @@
  * SOFTWARE.
  */
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
-    }
-}
+apply plugin: 'maven'
 
-allprojects {
-    repositories {
-        jcenter()
+task installArchives(type: Upload) {
+    repositories.mavenInstaller {
+        configuration = configurations.default
+
+        pom.groupId = GROUP
+        pom.artifactId = POM_ARTIFACT_ID
+        pom.version = VERSION_NAME
     }
 }

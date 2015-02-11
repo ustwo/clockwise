@@ -23,7 +23,6 @@
  */
 
 apply plugin: 'com.android.library'
-apply plugin: 'maven-publish'
 
 android {
     compileSdkVersion 21
@@ -47,3 +46,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-wearable:6.5.87'
     compile 'com.google.android.support:wearable:1.1.0'
 }
+
+apply from: '../maven_local.gradle'
