@@ -4,7 +4,7 @@ Clockwise is a watch face framework for Android Wear developed by ustwo. It exte
 
 ### Background  
 
-ustwo worked with Google to develop the [first watch faces on the Android Wear platform][2], and in doing so, we learned a great deal and identified the benefit of extending the existing watch face API into an open source framework. The purpose of Clockwise is to help developers more easily consider the inherent nuances in developing watch faces on the Android Wear platform, including varying hardware specifications and battery life conservation. The goal is that by utilizing the Clockwise development framework in conjunction with the [Watch Face design guidelines][3] (also created by ustwo), developers can enhance the user's experience on Android Wear.  
+ustwo worked with Google to develop the [first watch faces on the Android Wear platform][2], and in doing so, we learned a great deal and identified the benefit of extending the existing watch face API into an open source framework. The purpose of Clockwise is to help developers more easily consider the inherent nuances in developing watch faces on the Android Wear platform, including varying hardware specifications and battery life conservation. The goal is that by utilizing the Clockwise development framework in conjunction with the [Watch Face design guidelines][3] (co-created with ustwo), developers can enhance the user's experience on Android Wear.  
 
 ### Getting Started  
 
