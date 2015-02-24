@@ -10,6 +10,8 @@ ustwo worked with Google to develop the [first watch faces on the Android Wear p
 
 Have a look at the [Clockwise Wiki][4] for more details on how to integrate Clockwise as well as full documentation and code samples.  
 
+Once you are prepared to build your watch face using Clockwise, head over to our [Clockwise Samples][11] GitHub repository for some fully functional watch faces that we've made available.  
+
 ## Releases
 
 Release Notes => [RELEASES.md][7]  
@@ -56,3 +58,4 @@ If you would like to contribute to Clockwise, please feel free to fork the repos
 [8]:https://github.com/ustwo/Clockwise/issues
 [9]:mailto:clockwise@ustwo.com
 [10]:https://source.android.com/source/code-style.html
+[11]:https://github.com/ustwo/clockwise-samples
