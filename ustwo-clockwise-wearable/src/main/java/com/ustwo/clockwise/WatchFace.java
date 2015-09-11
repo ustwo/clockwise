@@ -226,6 +226,10 @@ public abstract class WatchFace extends WatchFaceService {
         Logr.v("WatchFace.onCardPeek: " + rect);
     }
 
+    protected void onTapCommand(@TapType int tapType, int x, int y, long eventTime) {
+        Logr.v("WatchFace.onTapCommand: " + tapType);
+    }
+
     /**
      * Invalidates the entire canvas and forces {@link #onDraw(android.graphics.Canvas)} to be called.
      */
@@ -353,6 +357,12 @@ public abstract class WatchFace extends WatchFaceService {
             super.onPeekCardPositionUpdate(rect);
             onCardPeek(rect);
             updateTimeAndInvalidate();
+        }
+
+        @Override
+        public void onTapCommand(@TapType int tapType, int x, int y, long eventTime) {
+            super.onTapCommand(tapType, x, y, eventTime);
+            WatchFace.this.onTapCommand(tapType, x, y, eventTime);
         }
 
         @Override
