@@ -263,6 +263,19 @@ public abstract class WatchFace extends WatchFaceService {
         invalidate();
     }
 
+    /**
+     * Change the {@link com.ustwo.clockwise.WatchMode#INTERACTIVE} mode update rate.
+     * This will tell the {@link com.ustwo.clockwise.WatchFace} base class the period to call
+     * {@link #onTimeChanged(WatchFaceTime, WatchFaceTime)} and
+     * {@link #onDraw(android.graphics.Canvas)}.
+     *
+     * @param updateRateMillis The new update rate, expressed in milliseconds between updates
+     * @param delayUntilWholeSecond Whether the first update should start on a whole second (i.e. when milliseconds are 0)
+     */
+    public void setInteractiveUpdateRate(long updateRateMillis, boolean delayUntilWholeSecond) {
+        mWatchFaceEngine.startTimeUpdater(updateRateMillis, delayUntilWholeSecond);
+    }
+
     @Override
     public WatchFaceService.Engine onCreateEngine() {
         Logr.v("WatchFace.onCreateEngine");
@@ -303,13 +316,17 @@ public abstract class WatchFace extends WatchFaceService {
         };
 
         private void startTimeUpdater() {
+            startTimeUpdater(getInteractiveModeUpdateRate(), true);
+        }
+
+        public void startTimeUpdater(long updateRate, boolean delayStart) {
             Logr.v("WatchFace.startTimeUpdater: " + getInteractiveModeUpdateRate());
 
             cancelTimeUpdater();
             // start updater on next second (millis = 0)
-            long initialDelay = DateUtils.SECOND_IN_MILLIS - (System.currentTimeMillis() % 1000);
+            long initialDelay = (delayStart ? DateUtils.SECOND_IN_MILLIS - (System.currentTimeMillis() % 1000) : 0);
             mScheduledTimeUpdater = mScheduledTimeUpdaterPool.scheduleAtFixedRate(mTimeUpdater,
-                    initialDelay, getInteractiveModeUpdateRate(), TimeUnit.MILLISECONDS);
+                    initialDelay, updateRate, TimeUnit.MILLISECONDS);
         }
 
         private void checkTimeUpdater() {
