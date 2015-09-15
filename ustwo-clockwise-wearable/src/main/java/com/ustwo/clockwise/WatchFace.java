@@ -264,7 +264,11 @@ public abstract class WatchFace extends WatchFaceService {
     }
 
     /**
-     * Change the {@link com.ustwo.clockwise.WatchMode#INTERACTIVE} mode update rate.
+     * Change the {@link com.ustwo.clockwise.WatchMode#INTERACTIVE} mode update rate for the
+     * duration of the current interactive mode. The mode will change back to one specified by
+     * {@link #getInteractiveModeUpdateRate()} once the watch returns to interactive mode.
+     * May be useful for creating animations when a higher-than-normal update rate is desired for a
+     * short period of time.
      * This will tell the {@link com.ustwo.clockwise.WatchFace} base class the period to call
      * {@link #onTimeChanged(WatchFaceTime, WatchFaceTime)} and
      * {@link #onDraw(android.graphics.Canvas)}.
@@ -272,8 +276,8 @@ public abstract class WatchFace extends WatchFaceService {
      * @param updateRateMillis The new update rate, expressed in milliseconds between updates
      * @param delayUntilWholeSecond Whether the first update should start on a whole second (i.e. when milliseconds are 0)
      */
-    public void setInteractiveUpdateRate(long updateRateMillis, boolean delayUntilWholeSecond) {
-        mWatchFaceEngine.startTimeUpdater(updateRateMillis, delayUntilWholeSecond);
+    public void setPresentingUpdateRate(long updateRateMillis, boolean delayUntilWholeSecond) {
+        mWatchFaceEngine.checkTimeUpdater(updateRateMillis, delayUntilWholeSecond);
     }
 
     @Override
@@ -315,26 +319,18 @@ public abstract class WatchFace extends WatchFaceService {
             }
         };
 
-        private void startTimeUpdater() {
-            startTimeUpdater(getInteractiveModeUpdateRate(), true);
-        }
-
-        public void startTimeUpdater(long updateRate, boolean delayStart) {
-            Logr.v("WatchFace.startTimeUpdater: " + getInteractiveModeUpdateRate());
-
-            cancelTimeUpdater();
-            // start updater on next second (millis = 0)
-            long initialDelay = (delayStart ? DateUtils.SECOND_IN_MILLIS - (System.currentTimeMillis() % 1000) : 0);
-            mScheduledTimeUpdater = mScheduledTimeUpdaterPool.scheduleAtFixedRate(mTimeUpdater,
-                    initialDelay, updateRate, TimeUnit.MILLISECONDS);
-        }
-
         private void checkTimeUpdater() {
-            if (mIsAmbient || !isVisible()) {
-                // Rely on timeTick to update the watch faces.
-                cancelTimeUpdater();
-            } else {
-                startTimeUpdater();
+            checkTimeUpdater(getInteractiveModeUpdateRate(), true);
+        }
+
+        private void checkTimeUpdater(long updateRate, boolean delayStart) {
+            cancelTimeUpdater();
+            // Note that when we're ambient or invisible, we rely on timeTick to update instead of a scheduled future
+            if (!mIsAmbient && isVisible()) {
+                // start updater on next second (millis = 0) when delayed start is requested
+                long initialDelay = (delayStart ? DateUtils.SECOND_IN_MILLIS - (System.currentTimeMillis() % 1000) : 0);
+                mScheduledTimeUpdater = mScheduledTimeUpdaterPool.scheduleAtFixedRate(mTimeUpdater,
+                        initialDelay, updateRate, TimeUnit.MILLISECONDS);
             }
         }
 
