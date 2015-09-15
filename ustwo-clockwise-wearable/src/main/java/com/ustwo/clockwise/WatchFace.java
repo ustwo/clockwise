@@ -276,7 +276,7 @@ public abstract class WatchFace extends WatchFaceService {
      * @param updateRateMillis The new update rate, expressed in milliseconds between updates
      * @param delayUntilWholeSecond Whether the first update should start on a whole second (i.e. when milliseconds are 0)
      */
-    public void setPresentingUpdateRate(long updateRateMillis, boolean delayUntilWholeSecond) {
+    public void startPresentingWithUpdateRate(long updateRateMillis, boolean delayUntilWholeSecond) {
         mWatchFaceEngine.checkTimeUpdater(updateRateMillis, delayUntilWholeSecond);
     }
 
