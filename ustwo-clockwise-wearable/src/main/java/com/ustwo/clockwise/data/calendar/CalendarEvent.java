@@ -36,6 +36,7 @@ public class CalendarEvent implements Cloneable {
     private Date mEnd;
     private boolean mIsAllDay;
     private String mDisplayColor;
+    private String mLocation;
 
     /**
      * Returns the title of the calendar event (corresponds to
@@ -128,4 +129,22 @@ public class CalendarEvent implements Cloneable {
         mDisplayColor = displayColor;
     }
 
+    /**
+     * Returns the location of the calendar event (corresponds to
+     * {@link android.provider.CalendarContract.Instances#EVENT_LOCATION} column)
+     *
+     * @return the location of the calendar event.
+     */
+    public String getLocation() {
+        return mLocation;
+    }
+
+    /**
+     * Sets a new value for the location of the calendar event.
+     *
+     * @param location new location for calendar event.
+     */
+    public void setLocation(String location) {
+        mLocation = location;
+    }
 }
