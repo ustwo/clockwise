@@ -37,6 +37,7 @@ public class CalendarEvent implements Cloneable {
     private boolean mIsAllDay;
     private String mDisplayColor;
     private String mLocation;
+    private int mMyAttendeeStatus;
 
     /**
      * Returns the title of the calendar event (corresponds to
@@ -146,5 +147,25 @@ public class CalendarEvent implements Cloneable {
      */
     public void setLocation(String location) {
         mLocation = location;
+    }
+
+    /**
+     * Returns my attendee status of this calendar event (corresponds to
+     * {@link android.provider.CalendarContract.Instances#SELF_ATTENDEE_STATUS} column)
+     *
+     * @return my attendee status of this calendar event.
+     */
+    public int getMyAttendeeStatus() {
+        return mMyAttendeeStatus;
+    }
+
+    /**
+     * Sets my attendee status of this calendar event. NOTE: this is NOT synced with the Calendar
+     * Provider and is only used within the context of this class.
+     *
+     * @param myAttendeeStatus my attendee status of this calendar event.
+     */
+    public void setMyAttendeeStatus(int myAttendeeStatus) {
+        mMyAttendeeStatus = myAttendeeStatus;
     }
 }
