@@ -52,6 +52,7 @@ public class CalendarWatchFaceHelper {
             CalendarContract.Instances.ALL_DAY,
             CalendarContract.Instances.DISPLAY_COLOR,
             CalendarContract.Instances.EVENT_LOCATION,
+            CalendarContract.Instances.SELF_ATTENDEE_STATUS,
     };
     private final BroadcastReceiver mCalendarProviderChangedReceiver = new BroadcastReceiver() {
         @Override
@@ -149,17 +150,21 @@ public class CalendarWatchFaceHelper {
             Boolean isAllDay = !cursor.getString(cursor.getColumnIndex(CalendarContract.Instances.ALL_DAY)).equals("0");
             String eventColor = cursor.getString(cursor.getColumnIndex(CalendarContract.Instances.DISPLAY_COLOR));
             String eventLocation = cursor.getString(cursor.getColumnIndex(CalendarContract.Instances.EVENT_LOCATION));
+            int myAttendeeStatus = cursor.getInt(cursor.getColumnIndex(CalendarContract.Instances.SELF_ATTENDEE_STATUS));
 
-            CalendarEvent newEvent = new CalendarEvent();
-            newEvent.setTitle(title);
-            cal.setTimeInMillis(beginVal);
-            newEvent.setStart(cal.getTime());
-            cal.setTimeInMillis(endVal);
-            newEvent.setEnd(cal.getTime());
-            newEvent.setAllDay(isAllDay);
-            newEvent.setDisplayColor(eventColor);
-            newEvent.setLocation(eventLocation);
-            events.add(newEvent);
+            if(myAttendeeStatus != CalendarContract.Attendees.ATTENDEE_STATUS_DECLINED) {
+                CalendarEvent newEvent = new CalendarEvent();
+                newEvent.setTitle(title);
+                cal.setTimeInMillis(beginVal);
+                newEvent.setStart(cal.getTime());
+                cal.setTimeInMillis(endVal);
+                newEvent.setEnd(cal.getTime());
+                newEvent.setAllDay(isAllDay);
+                newEvent.setDisplayColor(eventColor);
+                newEvent.setLocation(eventLocation);
+                newEvent.setMyAttendeeStatus(myAttendeeStatus);
+                events.add(newEvent);
+            }
         }
         cursor.close();
 
