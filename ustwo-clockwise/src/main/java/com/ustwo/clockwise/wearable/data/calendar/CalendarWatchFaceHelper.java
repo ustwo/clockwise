@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.ustwo.clockwise.common.data.calendar;
+package com.ustwo.clockwise.wearable.data.calendar;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentUris;

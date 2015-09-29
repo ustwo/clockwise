@@ -22,12 +22,12 @@
  * SOFTWARE.
  */
 
-package com.ustwo.clockwise.common.data.calendar;
+package com.ustwo.clockwise.wearable.data.calendar;
 
 import java.util.Comparator;
 
 /**
- * Class to compare the start date of {@link com.ustwo.clockwise.common.data.calendar.CalendarEvent} instances.
+ * Class to compare the start date of {@link com.ustwo.clockwise.wearable.data.calendar.CalendarEvent} instances.
  */
 public class CalendarEventComparator implements Comparator<CalendarEvent> {
     @Override
