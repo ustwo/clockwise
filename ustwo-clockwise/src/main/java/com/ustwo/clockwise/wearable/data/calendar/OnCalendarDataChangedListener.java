@@ -27,5 +27,6 @@ package com.ustwo.clockwise.wearable.data.calendar;
 import java.util.List;
 
 public interface OnCalendarDataChangedListener {
+    void onPermissionDenied();
     void onCalendarDataChanged(List<CalendarEvent> events);
 }

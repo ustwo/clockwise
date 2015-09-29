@@ -24,6 +24,7 @@
 
 package com.ustwo.clockwise.wearable.data.calendar;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -33,6 +34,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CalendarContract;
 import android.support.wearable.provider.WearableCalendarContract;
+
+import com.ustwo.clockwise.wearable.permissions.PermissionRequestor;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -66,6 +69,7 @@ public class CalendarWatchFaceHelper {
             updateCalendarEvents();
         }
     };
+
     private long mTimeLimitMillis;
     private Context mContext;
     private OnCalendarDataChangedListener mListener;
@@ -82,7 +86,7 @@ public class CalendarWatchFaceHelper {
         context.registerReceiver(mCalendarProviderChangedReceiver, getCalendarEventsIntentFilter());
         context.registerReceiver(mDateTimeChangedReceiver, getDateTimeChangedIntentFilter());
 
-        updateCalendarEvents();
+        checkUpdateCalendarEvents();
     }
 
     public void onDestroy() {
@@ -126,6 +130,23 @@ public class CalendarWatchFaceHelper {
         filter.addAction(Intent.ACTION_DATE_CHANGED);
         filter.addAction(Intent.ACTION_TIME_CHANGED);
         return filter;
+    }
+
+    private void checkUpdateCalendarEvents() {
+        PermissionRequestor requestor = new PermissionRequestor(mContext, new PermissionRequestor.PermissionRequestListener() {
+            @Override
+            public void onPermissionGranted() {
+                updateCalendarEvents();
+            }
+
+            @Override
+            public void onPermissionDenied() {
+                if(mListener != null) {
+                    mListener.onPermissionDenied();
+                }
+            }
+        });
+        requestor.requestPermission(Manifest.permission.READ_CALENDAR, true);
     }
 
     private void updateCalendarEvents() {
@@ -172,4 +193,5 @@ public class CalendarWatchFaceHelper {
 
         mListener.onCalendarDataChanged(events);
     }
+
 }

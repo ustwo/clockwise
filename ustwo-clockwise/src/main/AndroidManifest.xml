@@ -34,6 +34,11 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
 
+        <activity
+            android:name=".common.permissions.PermissionRequestActivity"
+            android:label=""
+            android:theme="@android:style/Theme.DeviceDefault.NoActionBar"/>
+
     </application>
 
 </manifest>
