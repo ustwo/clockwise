@@ -1,5 +1,7 @@
 package com.ustwo.clockwise.companion;
 
+import android.util.Log;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.data.FreezableUtils;
@@ -25,12 +27,13 @@ import java.util.List;
  * @author mark@ustwo.com
  */
 public class CompanionService extends WearableListenerService {
+    private static final String TAG = CompanionService.class.getSimpleName();
 
     protected WearableAPIHelper mWearableAPIHelper;
 
-    protected final List<DataChangedHandler> mDataChangedHandlers = new ArrayList<DataChangedHandler>();
+    protected final List<DataChangedHandler> mDataChangedHandlers = new ArrayList<>();
 
-    protected final List<MessageReceivedHandler> mMessageReceivedHandlers = new ArrayList<MessageReceivedHandler>();
+    protected final List<MessageReceivedHandler> mMessageReceivedHandlers = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -82,6 +85,8 @@ public class CompanionService extends WearableListenerService {
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         String path = messageEvent.getPath();
+        Log.v(TAG, "onMessageReceived: " + path);
+
 
         for (MessageReceivedHandler handler : mMessageReceivedHandlers) {
             if (null != handler.getSupportedPaths() && handler.getSupportedPaths().contains(path)) {

@@ -24,6 +24,8 @@ public class CompanionPermissionRequestMessageHandler implements MessageReceived
 
     @Override
     public void onMessageReceived(String path, DataMap map, WearableAPIHelper apiHelper) {
+        Log.v(TAG, "onMessageReceived: " + path);
+
         if(path.equals(Constants.DATA_PATH_COMPANION_PERMISSION_REQUEST)) {
             String permission = map.getString(Constants.DATA_KEY_PERMISSION);
 

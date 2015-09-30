@@ -56,8 +56,6 @@ public class PermissionRequestor implements DataApi.DataListener {
         mWearableAPIHelper = new WearableAPIHelper(mContext, new WearableAPIHelper.WearableAPIHelperListener() {
             @Override
             public void onWearableAPIConnected(GoogleApiClient apiClient) {
-                Wearable.DataApi.addListener(mWearableAPIHelper.getGoogleApiClient(), PermissionRequestor.this);
-
                 if(onPhone) {
                     doRequestCompanionPermission(permission);
                 } else {
@@ -73,12 +71,15 @@ public class PermissionRequestor implements DataApi.DataListener {
             public void onWearableAPIConnectionFailed(ConnectionResult result) {
             }
         });
+
+        Wearable.DataApi.addListener(mWearableAPIHelper.getGoogleApiClient(), this);
     }
 
     private void doRequestCompanionPermission(final String permission) {
-        DataMap map = new DataMap();
-        map.putString(Constants.DATA_KEY_PERMISSION, permission);
-        mWearableAPIHelper.putMessage(Constants.DATA_PATH_COMPANION_PERMISSION_REQUEST, map.toByteArray(), null);
+        DataMap dataMap = new DataMap();
+        dataMap.putString(Constants.DATA_KEY_PERMISSION, permission);
+        dataMap.putLong(Constants.DATA_KEY_TIMESTAMP, System.currentTimeMillis());
+        mWearableAPIHelper.putMessage(Constants.DATA_PATH_COMPANION_PERMISSION_REQUEST, dataMap.toByteArray(), null);
     }
 
     private void doRequestWearablePermission(final String permission) {
