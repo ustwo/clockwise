@@ -242,6 +242,8 @@ public abstract class WatchFace extends WatchFaceService {
 
         try {
             onDraw(canvas);
+        } catch(Exception e) {
+            e.printStackTrace();
         } finally {
             mWatchFaceEngine.getSurfaceHolder().unlockCanvasAndPost(canvas);
         }
