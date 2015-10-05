@@ -146,7 +146,7 @@ public class CalendarWatchFaceHelper {
                 }
             }
         });
-        requestor.requestPermission(Manifest.permission.READ_CALENDAR, true);
+        requestor.requestPermission(Manifest.permission.READ_CALENDAR, false);
     }
 
     private void updateCalendarEvents() {

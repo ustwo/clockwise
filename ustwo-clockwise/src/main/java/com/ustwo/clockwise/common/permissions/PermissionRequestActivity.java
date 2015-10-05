@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -41,8 +42,12 @@ public class PermissionRequestActivity extends Activity {
 
         mResponseDataPath = getIntent().getStringExtra(EXTRA_RESPONSE_DATA_PATH);
         mPermissions = getIntent().getStringArrayExtra(EXTRA_PERMISSIONS);
-        if(null != mResponseDataPath && null != mPermissions) {
-            ActivityCompat.requestPermissions(this, mPermissions, REQUEST_CODE);
+        if(null != mResponseDataPath && null != mPermissions && mPermissions.length > 0) {
+            if(ContextCompat.checkSelfPermission(this, mPermissions[0]) == PackageManager.PERMISSION_GRANTED) {
+                sendResponse(true);
+            } else {
+                ActivityCompat.requestPermissions(this, mPermissions, REQUEST_CODE);
+            }
         }
     }
 

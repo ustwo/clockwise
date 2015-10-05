@@ -37,7 +37,7 @@
         <activity
             android:name=".common.permissions.PermissionRequestActivity"
             android:label=""
-            android:theme="@android:style/Theme.DeviceDefault.NoActionBar"/>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
     </application>
 
