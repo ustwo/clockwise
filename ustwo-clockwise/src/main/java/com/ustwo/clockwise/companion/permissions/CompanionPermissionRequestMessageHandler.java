@@ -28,12 +28,14 @@ public class CompanionPermissionRequestMessageHandler implements MessageReceived
 
         if(path.equals(Constants.DATA_PATH_COMPANION_PERMISSION_REQUEST)) {
             String permission = map.getString(Constants.DATA_KEY_PERMISSION);
+            boolean justChecking = map.getBoolean(Constants.DATA_KEY_JUST_CHECKING);
 
             Log.v(TAG, "requesting companion permission: " + permission);
 
             Intent i = new Intent(mContext.getApplicationContext(), PermissionRequestActivity.class);
             i.putExtra(PermissionRequestActivity.EXTRA_RESPONSE_DATA_PATH, Constants.DATA_PATH_COMPANION_PERMISSION_RESPONSE);
             i.putExtra(PermissionRequestActivity.EXTRA_PERMISSIONS, new String[] { permission });
+            i.putExtra(PermissionRequestActivity.EXTRA_JUST_CHECKING, justChecking);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.getApplicationContext().startActivity(i);
         }

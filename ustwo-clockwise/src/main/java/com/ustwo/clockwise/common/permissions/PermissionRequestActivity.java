@@ -15,6 +15,7 @@ import com.ustwo.clockwise.common.WearableAPIHelper;
 public class PermissionRequestActivity extends Activity {
     public static final String EXTRA_RESPONSE_DATA_PATH = "extra_response_data_path";
     public static final String EXTRA_PERMISSIONS = "extra_permissions";
+    public static final String EXTRA_JUST_CHECKING = "extra_just_checking";
 
     private static final int REQUEST_CODE = 21;
 
@@ -44,7 +45,11 @@ public class PermissionRequestActivity extends Activity {
         mPermissions = getIntent().getStringArrayExtra(EXTRA_PERMISSIONS);
         if(null != mResponseDataPath && null != mPermissions && mPermissions.length > 0) {
             if(ContextCompat.checkSelfPermission(this, mPermissions[0]) == PackageManager.PERMISSION_GRANTED) {
-                sendResponse(true);
+                // TODO: mWearableAPIHelper might not be connected yet.
+                sendResponse(mResponseDataPath, true);
+            } else if(getIntent().getBooleanExtra(EXTRA_JUST_CHECKING, true)) {
+                // TODO: mWearableAPIHelper might not be connected yet.
+                sendResponse(Constants.DATA_PATH_INSTANT_COMPANION_PERMISSION_RESPONSE, false);
             } else {
                 ActivityCompat.requestPermissions(this, mPermissions, REQUEST_CODE);
             }
@@ -63,16 +68,16 @@ public class PermissionRequestActivity extends Activity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if(requestCode == REQUEST_CODE) {
-            sendResponse(grantResults[0] == PackageManager.PERMISSION_GRANTED);
+            sendResponse(mResponseDataPath, grantResults[0] == PackageManager.PERMISSION_GRANTED);
         }
     }
 
-    private void sendResponse(boolean granted) {
+    private void sendResponse(String responsePath, boolean granted) {
         DataMap dataMap = new DataMap();
         dataMap.putBoolean(Constants.DATA_KEY_PERMISSION, granted);
         dataMap.putLong(Constants.DATA_KEY_TIMESTAMP, System.currentTimeMillis());
         if (mWearableAPIHelper != null) {
-            mWearableAPIHelper.putDataMap(mResponseDataPath, dataMap, null);
+            mWearableAPIHelper.putDataMap(responsePath, dataMap, null);
         }
         finish();
     }

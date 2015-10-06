@@ -39,6 +39,11 @@
             android:label=""
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
+        <activity
+            android:name=".common.permissions.PermissionInfoActivity"
+            android:label=""
+            android:theme="@android:style/Theme.DeviceDefault.NoActionBar"/>
+
     </application>
 
 </manifest>
