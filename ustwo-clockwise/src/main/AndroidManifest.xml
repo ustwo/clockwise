@@ -44,6 +44,10 @@
             android:label=""
             android:theme="@android:style/Theme.DeviceDefault.NoActionBar"/>
 
+        <activity
+            android:name="android.support.wearable.activity.ConfirmationActivity"
+            android:theme="@android:style/Theme.DeviceDefault.NoActionBar"/>
+
     </application>
 
 </manifest>

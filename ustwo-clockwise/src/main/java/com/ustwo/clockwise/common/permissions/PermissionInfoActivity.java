@@ -1,7 +1,9 @@
 package com.ustwo.clockwise.common.permissions;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.wearable.activity.ConfirmationActivity;
 import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -41,6 +43,7 @@ public class PermissionInfoActivity extends Activity {
         findViewById(R.id.permission_info_imagebutton_confirm).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Send message back to the PermissionRequestor class
                 DataMap dataMap = new DataMap();
                 dataMap.putBoolean(Constants.DATA_KEY_OPEN_ON_PHONE, true);
                 dataMap.putLong(Constants.DATA_KEY_TIMESTAMP, System.currentTimeMillis());
@@ -48,6 +51,12 @@ public class PermissionInfoActivity extends Activity {
                     mWearableAPIHelper.putDataMap(Constants.DATA_PATH_PERMISSION_INFO_RESPONSE, dataMap, null);
                     mAccepted = true;
                 }
+
+                // Show the confirmation activity.
+                Intent intent = new Intent(getApplicationContext(), ConfirmationActivity.class);
+                intent.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE, ConfirmationActivity.OPEN_ON_PHONE_ANIMATION);
+                startActivity(intent);
+
                 finish();
             }
         });
