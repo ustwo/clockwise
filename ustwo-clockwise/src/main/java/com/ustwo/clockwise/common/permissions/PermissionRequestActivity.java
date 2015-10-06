@@ -47,7 +47,7 @@ public class PermissionRequestActivity extends Activity {
             if(ContextCompat.checkSelfPermission(this, mPermissions[0]) == PackageManager.PERMISSION_GRANTED) {
                 // TODO: mWearableAPIHelper might not be connected yet.
                 sendResponse(mResponseDataPath, true);
-            } else if(getIntent().getBooleanExtra(EXTRA_JUST_CHECKING, true)) {
+            } else if(getIntent().getBooleanExtra(EXTRA_JUST_CHECKING, false)) {
                 // TODO: mWearableAPIHelper might not be connected yet.
                 sendResponse(Constants.DATA_PATH_INSTANT_COMPANION_PERMISSION_RESPONSE, false);
             } else {
