@@ -30,9 +30,11 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CalendarContract;
+import android.support.v4.content.ContextCompat;
 import android.support.wearable.provider.WearableCalendarContract;
 
 import com.ustwo.clockwise.wearable.permissions.PermissionRequestor;
@@ -60,13 +62,19 @@ public class CalendarWatchFaceHelper {
     private final BroadcastReceiver mCalendarProviderChangedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateCalendarEvents();
+            // only update on event if we have the permission granted on the wearable
+            if(ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
+                doUpdateCalendarEvents();
+            }
         }
     };
     private final BroadcastReceiver mDateTimeChangedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateCalendarEvents();
+            // only update on event if we have the permission granted on the wearable
+            if(ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
+                doUpdateCalendarEvents();
+            }
         }
     };
 
@@ -85,8 +93,6 @@ public class CalendarWatchFaceHelper {
         // Using the same broadcast receiver for both filters does not work!
         context.registerReceiver(mCalendarProviderChangedReceiver, getCalendarEventsIntentFilter());
         context.registerReceiver(mDateTimeChangedReceiver, getDateTimeChangedIntentFilter());
-
-        checkUpdateCalendarEvents();
     }
 
     public void onDestroy() {
@@ -103,7 +109,7 @@ public class CalendarWatchFaceHelper {
     public void setTimeLimitMillis(int timeLimitMillis) {
         if (mTimeLimitMillis != timeLimitMillis) {
             mTimeLimitMillis = timeLimitMillis;
-            updateCalendarEvents();
+            doUpdateCalendarEvents();
         }
     }
 
@@ -132,11 +138,11 @@ public class CalendarWatchFaceHelper {
         return filter;
     }
 
-    private void checkUpdateCalendarEvents() {
+    public void updateCalendarEvents() {
         PermissionRequestor requestor = new PermissionRequestor(mContext, new PermissionRequestor.PermissionRequestListener() {
             @Override
             public void onPermissionGranted() {
-                updateCalendarEvents();
+                doUpdateCalendarEvents();
             }
 
             @Override
@@ -149,7 +155,7 @@ public class CalendarWatchFaceHelper {
         requestor.requestPermission(Manifest.permission.READ_CALENDAR, false);
     }
 
-    private void updateCalendarEvents() {
+    private void doUpdateCalendarEvents() {
         List<CalendarEvent> events = new ArrayList<CalendarEvent>();
 
         Uri.Builder builder = WearableCalendarContract.Instances.CONTENT_URI.buildUpon();
