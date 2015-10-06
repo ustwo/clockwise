@@ -65,6 +65,8 @@ public class CalendarWatchFaceHelper {
             // only update on event if we have the permission granted on the wearable
             if(ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
                 doUpdateCalendarEvents();
+            } else if(mListener != null) {
+                mListener.onPermissionDenied();
             }
         }
     };
@@ -74,6 +76,8 @@ public class CalendarWatchFaceHelper {
             // only update on event if we have the permission granted on the wearable
             if(ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
                 doUpdateCalendarEvents();
+            } else if(mListener != null) {
+                mListener.onPermissionDenied();
             }
         }
     };
@@ -142,6 +146,9 @@ public class CalendarWatchFaceHelper {
         PermissionRequestor requestor = new PermissionRequestor(mContext, new PermissionRequestor.PermissionRequestListener() {
             @Override
             public void onPermissionGranted() {
+                if(mListener != null) {
+                    mListener.onPermissionGranted();
+                }
                 doUpdateCalendarEvents();
             }
 
