@@ -40,12 +40,14 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Wearable;
 import com.ustwo.clockwise.common.Constants;
 import com.ustwo.clockwise.common.WearableAPIHelper;
+import com.ustwo.clockwise.common.permissions.PermissionInfoActivity;
 import com.ustwo.clockwise.common.permissions.PermissionRequestActivity;
 
 public class PermissionRequestor implements DataApi.DataListener {
     private WearableAPIHelper mWearableAPIHelper;
     private Context mContext;
     private PermissionRequestListener mListener;
+    private String mPermission;
 
     public PermissionRequestor(Context context, PermissionRequestListener listener) {
         mContext = context;
@@ -53,13 +55,20 @@ public class PermissionRequestor implements DataApi.DataListener {
     }
 
     public void requestPermission(final String permission, final boolean onPhone) {
+        requestPermission(permission, onPhone, null);
+    }
+
+    public void requestPermission(final String permission, final boolean onPhone, final String watchFaceName) {
+        // TODO: could this be a problem if multiple permissions are requested?
+        mPermission = permission;
+
         mWearableAPIHelper = new WearableAPIHelper(mContext, new WearableAPIHelper.WearableAPIHelperListener() {
             @Override
             public void onWearableAPIConnected(GoogleApiClient apiClient) {
                 if(onPhone) {
-                    doRequestCompanionPermission(permission);
+                    doRequestCompanionPermission(mPermission, true);
                 } else {
-                    doRequestWearablePermission(permission);
+                    doRequestWearablePermission(mPermission);
                 }
             }
 
@@ -75,9 +84,19 @@ public class PermissionRequestor implements DataApi.DataListener {
         Wearable.DataApi.addListener(mWearableAPIHelper.getGoogleApiClient(), this);
     }
 
-    private void doRequestCompanionPermission(final String permission) {
+    private void showEducationalScreen() {
+        Intent i = new Intent(mContext.getApplicationContext(), PermissionInfoActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mContext.getApplicationContext().startActivity(i);
+    }
+
+    private void doRequestCompanionPermission(final String permission, final boolean justChecking) {
+
+        System.out.println(">>>>> REQUEST PERMISSION - just checking = " + justChecking);
+
         DataMap dataMap = new DataMap();
         dataMap.putString(Constants.DATA_KEY_PERMISSION, permission);
+        dataMap.putBoolean(Constants.DATA_KEY_JUST_CHECKING, justChecking);
         dataMap.putLong(Constants.DATA_KEY_TIMESTAMP, System.currentTimeMillis());
         mWearableAPIHelper.putMessage(Constants.DATA_PATH_COMPANION_PERMISSION_REQUEST, dataMap.toByteArray(), null);
     }
@@ -110,12 +129,29 @@ public class PermissionRequestor implements DataApi.DataListener {
             if(wearableResponse || companionResponse) {
                 DataMap dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
                 boolean granted = dataMap.getBoolean(Constants.DATA_KEY_PERMISSION, false);
+                System.out.println(">>>>> PERMISSION RESPONSE - " + granted);
                 if(granted) {
                     handlePermissionGranted();
                 } else {
                     handlePermissionDenied();
                 }
                 killApiClient();
+            } else if(uri.getPath().endsWith(Constants.DATA_PATH_INSTANT_COMPANION_PERMISSION_RESPONSE)) {
+                DataMap dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
+                boolean granted = dataMap.getBoolean(Constants.DATA_KEY_PERMISSION, false);
+                System.out.println(">>>>> INSTANT PERMISSION RESPONSE - " + granted);
+                if(!granted) {
+                    showEducationalScreen();
+                }
+            } else if(uri.getPath().endsWith(Constants.DATA_PATH_PERMISSION_INFO_RESPONSE)) {
+                DataMap dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
+                boolean openOnPhone = dataMap.getBoolean(Constants.DATA_KEY_OPEN_ON_PHONE, false);
+                System.out.println(">>>>> PERMISSION INFO RESPONSE - " + openOnPhone);
+                if(openOnPhone) {
+                    doRequestCompanionPermission(mPermission, false);
+                } else {
+                    handlePermissionDenied();
+                }
             }
         }
     }
