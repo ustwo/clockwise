@@ -49,7 +49,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-            android:text="NO THANKS"/>
+            android:text="@string/educational_screen_companion_negative_button_text"/>
 
         <TextView
             android:id="@+id/educational_companion_positive_button"
@@ -60,6 +60,6 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-            android:text="CONTINUE"/>
+            android:text="@string/educational_screen_companion_positive_button_text"/>
     </LinearLayout>
 </RelativeLayout>

@@ -36,6 +36,7 @@
                 android:background="#5555CC" />
 
             <TextView
+                android:id="@+id/permission_info_textview_confirm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"

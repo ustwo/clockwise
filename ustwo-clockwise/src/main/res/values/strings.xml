@@ -27,4 +27,6 @@
 
     <string name="educational_screen_wearable_default">We need you to grant us a permission on the phone</string>
     <string name="educational_screen_wearable_open_on_phone">Open on phone</string>
+    <string name="educational_screen_companion_positive_button_text">CONTINUE</string>
+    <string name="educational_screen_companion_negative_button_text">NO THANKS</string>
 </resources>

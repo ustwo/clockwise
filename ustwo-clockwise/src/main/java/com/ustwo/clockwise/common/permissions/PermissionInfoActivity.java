@@ -87,6 +87,8 @@ public class PermissionInfoActivity extends Activity {
                         finish();
                     }
                 });
+
+                ((TextView) findViewById(R.id.permission_info_textview_confirm)).setTextColor(textColor);
             }
         });
     }
