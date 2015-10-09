@@ -2,9 +2,11 @@ package com.ustwo.clockwise.common.permissions;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.wearable.activity.ConfirmationActivity;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -17,6 +19,10 @@ import com.ustwo.clockwise.common.WearableAPIHelper;
  * Created by Toffer on 10/5/2015.
  */
 public class PermissionInfoActivity extends Activity {
+
+    public static final String EXTRA_BG_COLOR = "extra_bg_color";
+    public static final String EXTRA_TEXT_COLOR = "extra_text_color";
+    public static final String EXTRA_MESSAGE = "extra_message";
 
     private WearableAPIHelper mWearableAPIHelper;
     private boolean mAccepted = false;
@@ -40,6 +46,18 @@ public class PermissionInfoActivity extends Activity {
         });
 
         setContentView(R.layout.permission_info);
+
+        int bgColor = getIntent().getIntExtra(EXTRA_BG_COLOR, Color.BLACK);
+        findViewById(R.id.permission_info_layout_root).setBackgroundColor(bgColor);
+
+        int textColor = getIntent().getIntExtra(EXTRA_TEXT_COLOR, Color.WHITE);
+        TextView tv = (TextView)findViewById(R.id.permission_info_textview_message);
+        tv.setTextColor(textColor);
+        String message = getIntent().getStringExtra(EXTRA_MESSAGE);
+        if(null != message && !"".equals(message)) {
+            tv.setText(message);
+        }
+
         findViewById(R.id.permission_info_imagebutton_confirm).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

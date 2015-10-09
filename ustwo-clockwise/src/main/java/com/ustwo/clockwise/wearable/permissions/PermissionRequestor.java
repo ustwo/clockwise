@@ -40,6 +40,7 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Wearable;
 import com.ustwo.clockwise.common.Constants;
 import com.ustwo.clockwise.common.WearableAPIHelper;
+import com.ustwo.clockwise.common.permissions.EducationalObject;
 import com.ustwo.clockwise.common.permissions.PermissionInfoActivity;
 import com.ustwo.clockwise.common.permissions.PermissionRequestActivity;
 
@@ -48,6 +49,8 @@ public class PermissionRequestor implements DataApi.DataListener {
     private Context mContext;
     private PermissionRequestListener mListener;
     private String mPermission;
+    private EducationalObject mEducationalObject;
+    private int mBgColor, mTextColor;
 
     public PermissionRequestor(Context context, PermissionRequestListener listener) {
         mContext = context;
@@ -58,9 +61,9 @@ public class PermissionRequestor implements DataApi.DataListener {
         requestPermission(permission, onPhone, null);
     }
 
-    public void requestPermission(final String permission, final boolean onPhone, final String watchFaceName) {
-        // TODO: could this be a problem if multiple permissions are requested?
+    public void requestPermission(final String permission, final boolean onPhone, EducationalObject eo) {
         mPermission = permission;
+        mEducationalObject = eo;
 
         mWearableAPIHelper = new WearableAPIHelper(mContext, new WearableAPIHelper.WearableAPIHelperListener() {
             @Override
@@ -84,8 +87,11 @@ public class PermissionRequestor implements DataApi.DataListener {
         Wearable.DataApi.addListener(mWearableAPIHelper.getGoogleApiClient(), this);
     }
 
-    private void showEducationalScreen() {
+    private void showWearableEducationalScreen() {
         Intent i = new Intent(mContext.getApplicationContext(), PermissionInfoActivity.class);
+        i.putExtra(PermissionInfoActivity.EXTRA_BG_COLOR, mEducationalObject.getBackgroundColor());
+        i.putExtra(PermissionInfoActivity.EXTRA_TEXT_COLOR, mEducationalObject.getTextColor());
+        i.putExtra(PermissionInfoActivity.EXTRA_MESSAGE, mEducationalObject.getEducationalTextWearable());
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.getApplicationContext().startActivity(i);
     }
@@ -97,6 +103,16 @@ public class PermissionRequestor implements DataApi.DataListener {
         DataMap dataMap = new DataMap();
         dataMap.putString(Constants.DATA_KEY_PERMISSION, permission);
         dataMap.putBoolean(Constants.DATA_KEY_JUST_CHECKING, justChecking);
+        if(null != mEducationalObject) {
+
+            System.out.println(">>>>> PERMISSION REQUESTOR COLOR: " + mEducationalObject.getBackgroundColor());
+
+            dataMap.putString(Constants.DATA_KEY_EDUCATIONAL_TEXT1, mEducationalObject.getEducationalText1Companion());
+            dataMap.putString(Constants.DATA_KEY_EDUCATIONAL_TEXT2, mEducationalObject.getEducationalText2Companion());
+            dataMap.putInt(Constants.DATA_KEY_EDUCATIONAL_BG_COLOR, mEducationalObject.getBackgroundColor());
+            dataMap.putInt(Constants.DATA_KEY_EDUCATIONAL_TEXT_COLOR, mEducationalObject.getTextColor());
+            dataMap.putInt(Constants.DATA_KEY_EDUCATIONAL_RESOURCE_ID, mEducationalObject.getResourceId());
+        }
         dataMap.putLong(Constants.DATA_KEY_TIMESTAMP, System.currentTimeMillis());
         mWearableAPIHelper.putMessage(Constants.DATA_PATH_COMPANION_PERMISSION_REQUEST, dataMap.toByteArray(), null);
     }
@@ -141,7 +157,7 @@ public class PermissionRequestor implements DataApi.DataListener {
                 boolean granted = dataMap.getBoolean(Constants.DATA_KEY_PERMISSION, false);
                 System.out.println(">>>>> INSTANT PERMISSION RESPONSE - " + granted);
                 if(!granted) {
-                    showEducationalScreen();
+                    showWearableEducationalScreen();
                 }
             } else if(uri.getPath().endsWith(Constants.DATA_PATH_PERMISSION_INFO_RESPONSE)) {
                 DataMap dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();

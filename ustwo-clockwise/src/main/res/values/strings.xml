@@ -24,4 +24,6 @@
 
 <resources>
     <string name="app_name">clockwise</string>
+
+    <string name="educational_screen_wearable_default">We need you to grant us a permission on the phone</string>
 </resources>

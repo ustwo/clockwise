@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.wearable.view.BoxInsetLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/permission_info_layout_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black">
@@ -12,11 +13,11 @@
         android:layout_margin="20dp">
 
         <TextView
-            android:id="@+id/watchfacenext_tap_location_label"
+            android:id="@+id/permission_info_textview_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:text="We need you to grant us a permission on the phone"
+            android:text="@string/educational_screen_wearable_default"
             android:textColor="@color/white" />
 
         <ImageButton
