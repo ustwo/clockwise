@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.wearable.activity.ConfirmationActivity;
+import android.support.wearable.view.WatchViewStub;
 import android.view.View;
 import android.widget.TextView;
 
@@ -47,35 +48,45 @@ public class PermissionInfoActivity extends Activity {
 
         setContentView(R.layout.permission_info);
 
-        int bgColor = getIntent().getIntExtra(EXTRA_BG_COLOR, Color.BLACK);
-        findViewById(R.id.permission_info_layout_root).setBackgroundColor(bgColor);
+        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.permission_info_stub);
 
-        int textColor = getIntent().getIntExtra(EXTRA_TEXT_COLOR, Color.WHITE);
-        TextView tv = (TextView)findViewById(R.id.permission_info_textview_message);
-        tv.setTextColor(textColor);
-        String message = getIntent().getStringExtra(EXTRA_MESSAGE);
-        if(null != message && !"".equals(message)) {
-            tv.setText(message);
-        }
+        // Update the UI in a listener because the layout is using a stub.
+        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
 
-        findViewById(R.id.permission_info_imagebutton_confirm).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                // Send message back to the PermissionRequestor class
-                DataMap dataMap = new DataMap();
-                dataMap.putBoolean(Constants.DATA_KEY_OPEN_ON_PHONE, true);
-                dataMap.putLong(Constants.DATA_KEY_TIMESTAMP, System.currentTimeMillis());
-                if (mWearableAPIHelper != null) {
-                    mWearableAPIHelper.putDataMap(Constants.DATA_PATH_PERMISSION_INFO_RESPONSE, dataMap, null);
-                    mAccepted = true;
+            public void onLayoutInflated(WatchViewStub stub) {
+
+                int bgColor = getIntent().getIntExtra(EXTRA_BG_COLOR, Color.BLACK);
+                findViewById(R.id.permission_info_layout_root).setBackgroundColor(bgColor);
+
+                int textColor = getIntent().getIntExtra(EXTRA_TEXT_COLOR, Color.WHITE);
+                TextView tv = (TextView) findViewById(R.id.permission_info_textview_message);
+                tv.setTextColor(textColor);
+                String message = getIntent().getStringExtra(EXTRA_MESSAGE);
+                if (null != message && !"".equals(message)) {
+                    tv.setText(message);
                 }
 
-                // Show the confirmation activity.
-                Intent intent = new Intent(getApplicationContext(), ConfirmationActivity.class);
-                intent.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE, ConfirmationActivity.OPEN_ON_PHONE_ANIMATION);
-                startActivity(intent);
+                findViewById(R.id.permission_info_imagebutton_confirm).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Send message back to the PermissionRequestor class
+                        DataMap dataMap = new DataMap();
+                        dataMap.putBoolean(Constants.DATA_KEY_OPEN_ON_PHONE, true);
+                        dataMap.putLong(Constants.DATA_KEY_TIMESTAMP, System.currentTimeMillis());
+                        if (mWearableAPIHelper != null) {
+                            mWearableAPIHelper.putDataMap(Constants.DATA_PATH_PERMISSION_INFO_RESPONSE, dataMap, null);
+                            mAccepted = true;
+                        }
 
-                finish();
+                        // Show the confirmation activity.
+                        Intent intent = new Intent(getApplicationContext(), ConfirmationActivity.class);
+                        intent.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE, ConfirmationActivity.OPEN_ON_PHONE_ANIMATION);
+                        startActivity(intent);
+
+                        finish();
+                    }
+                });
             }
         });
     }
@@ -83,7 +94,7 @@ public class PermissionInfoActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(!mAccepted) {
+        if (!mAccepted) {
             DataMap dataMap = new DataMap();
             dataMap.putBoolean(Constants.DATA_KEY_OPEN_ON_PHONE, false);
             dataMap.putLong(Constants.DATA_KEY_TIMESTAMP, System.currentTimeMillis());
@@ -92,7 +103,7 @@ public class PermissionInfoActivity extends Activity {
             }
         }
 
-        if(null != mWearableAPIHelper) {
+        if (null != mWearableAPIHelper) {
             mWearableAPIHelper.onDestroy();
         }
     }
