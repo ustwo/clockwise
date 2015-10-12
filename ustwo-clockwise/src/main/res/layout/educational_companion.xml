@@ -10,29 +10,32 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="100dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="120dp">
+        android:layout_marginBottom="110dp"
+        android:layout_marginLeft="38dp"
+        android:layout_marginRight="130dp">
 
         <TextView
             android:id="@+id/educational_companion_textview1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"/>
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="29.333dp"/>
 
         <TextView
             android:id="@+id/educational_companion_textview2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"/>
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="16dp"/>
     </LinearLayout>
 
     <ImageView
         android:id="@+id/educational_companion_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:foregroundGravity="right|center_vertical"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26.667dp"
+        android:layout_alignParentRight="true"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,22 +47,26 @@
             android:id="@+id/educational_companion_negative_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:paddingTop="18dp"
+            android:paddingBottom="18dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:fontFamily="sans-serif"
+            android:textStyle="bold"
+            android:textSize="14dp"
             android:text="@string/educational_screen_companion_negative_button_text"/>
 
         <TextView
             android:id="@+id/educational_companion_positive_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:paddingTop="18dp"
+            android:paddingBottom="18dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:fontFamily="sans-serif"
+            android:textStyle="bold"
+            android:textSize="14dp"
             android:text="@string/educational_screen_companion_positive_button_text"/>
     </LinearLayout>
 </RelativeLayout>

@@ -92,10 +92,10 @@ public class PermissionRequestActivity extends Activity {
 
         findViewById(R.id.educational_companion_layout_root).setBackgroundColor(eo.getBackgroundColor());
 
-        if(-1 != eo.getResourceId()) {
+        if(null != eo.getResource()) {
             try {
-                ((ImageView) findViewById(R.id.educational_companion_image)).setImageDrawable(
-                        getApplicationContext().getResources().getDrawable(eo.getResourceId()));
+                ((ImageView) findViewById(R.id.educational_companion_image)).setImageDrawable(getApplicationContext().getResources().getDrawable(
+                        getApplicationContext().getResources().getIdentifier(eo.getResource()[0], "drawable", eo.getResource()[1])));
             } catch (Resources.NotFoundException nfe) {
                 nfe.printStackTrace();
             }

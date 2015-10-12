@@ -50,7 +50,6 @@ public class PermissionRequestor implements DataApi.DataListener {
     private PermissionRequestListener mListener;
     private String mPermission;
     private EducationalObject mEducationalObject;
-    private int mBgColor, mTextColor;
 
     public PermissionRequestor(Context context, PermissionRequestListener listener) {
         mContext = context;
@@ -97,21 +96,15 @@ public class PermissionRequestor implements DataApi.DataListener {
     }
 
     private void doRequestCompanionPermission(final String permission, final boolean justChecking) {
-
-        System.out.println(">>>>> REQUEST PERMISSION - just checking = " + justChecking);
-
         DataMap dataMap = new DataMap();
         dataMap.putString(Constants.DATA_KEY_PERMISSION, permission);
         dataMap.putBoolean(Constants.DATA_KEY_JUST_CHECKING, justChecking);
         if(null != mEducationalObject) {
-
-            System.out.println(">>>>> PERMISSION REQUESTOR COLOR: " + mEducationalObject.getBackgroundColor());
-
             dataMap.putString(Constants.DATA_KEY_EDUCATIONAL_TEXT1, mEducationalObject.getEducationalText1Companion());
             dataMap.putString(Constants.DATA_KEY_EDUCATIONAL_TEXT2, mEducationalObject.getEducationalText2Companion());
             dataMap.putInt(Constants.DATA_KEY_EDUCATIONAL_BG_COLOR, mEducationalObject.getBackgroundColor());
             dataMap.putInt(Constants.DATA_KEY_EDUCATIONAL_TEXT_COLOR, mEducationalObject.getTextColor());
-            dataMap.putInt(Constants.DATA_KEY_EDUCATIONAL_RESOURCE_ID, mEducationalObject.getResourceId());
+            dataMap.putStringArray(Constants.DATA_KEY_EDUCATIONAL_RESOURCE_ID, mEducationalObject.getResource());
         }
         dataMap.putLong(Constants.DATA_KEY_TIMESTAMP, System.currentTimeMillis());
         mWearableAPIHelper.putMessage(Constants.DATA_PATH_COMPANION_PERMISSION_REQUEST, dataMap.toByteArray(), null);

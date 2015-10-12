@@ -40,12 +40,9 @@ public class CompanionPermissionRequestMessageHandler implements MessageReceived
             i.putExtra(PermissionRequestActivity.EXTRA_PERMISSIONS, new String[]{permission});
             i.putExtra(PermissionRequestActivity.EXTRA_JUST_CHECKING, justChecking);
             if(null != text1 && null != text2) {
-
-                System.out.println(">>>>> COMPANION PERMISSION REQUEST MESSAGE HANDLER COLOR: " +  map.getInt(Constants.DATA_KEY_EDUCATIONAL_BG_COLOR, 0));
-
                 int bgColor = map.getInt(Constants.DATA_KEY_EDUCATIONAL_BG_COLOR, 0);
                 int textColor = map.getInt(Constants.DATA_KEY_EDUCATIONAL_TEXT_COLOR, 0);
-                int resourceId = map.getInt(Constants.DATA_KEY_EDUCATIONAL_RESOURCE_ID, -1);
+                String[] resourceId = map.getStringArray(Constants.DATA_KEY_EDUCATIONAL_RESOURCE_ID);
                 EducationalObject eo = new EducationalObject(null, text1, text2, bgColor, textColor, resourceId);
                 i.putExtra(PermissionRequestActivity.EXTRA_EDUCATIONAL_OBJECT, eo);
             }

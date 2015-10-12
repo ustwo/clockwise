@@ -1,5 +1,7 @@
 package com.ustwo.clockwise.common.permissions;
 
+import android.util.Log;
+
 import java.io.Serializable;
 
 /**
@@ -13,17 +15,22 @@ public class EducationalObject implements Serializable {
     private String mEducationalText2Companion;
     private int mBackgroundColor;
     private int mTextColor;
-    private int mResourceId;
+    private String[] mResource;
 
     public EducationalObject(String educationalTextWearable, String educationalText1Companion,
-            String educationalText2Companion, int bgColor, int textColor, int resourceId) {
+            String educationalText2Companion, int bgColor, int textColor, String[] resource) {
 
         mEducationalTextWearable = educationalTextWearable;
         mEducationalText1Companion = educationalText1Companion;
         mEducationalText2Companion = educationalText2Companion;
         mBackgroundColor = bgColor;
         mTextColor = textColor;
-        mResourceId = resourceId;
+        if(null != resource && resource.length != 2) {
+            mResource = null;
+            Log.w(EducationalObject.class.getSimpleName(), "The resource argument must be either null or have lenght 2. First string is the resource name and the second the package where it's located.");
+        } else {
+            mResource = resource;
+        }
     }
 
     public String getEducationalTextWearable() {
@@ -46,8 +53,8 @@ public class EducationalObject implements Serializable {
         return mTextColor;
     }
 
-    public int getResourceId() {
-        return mResourceId;
+    public String[] getResource() {
+        return mResource;
     }
 }
 
