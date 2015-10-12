@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_open_on_phone"
-                android:background="#5555CC" />
+                android:background="@drawable/open_on_phone_bg" />
 
             <TextView
                 android:id="@+id/permission_info_textview_confirm"

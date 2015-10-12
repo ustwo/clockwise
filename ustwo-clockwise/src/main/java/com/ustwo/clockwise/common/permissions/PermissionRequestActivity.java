@@ -2,10 +2,12 @@ package com.ustwo.clockwise.common.permissions;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -26,6 +28,8 @@ public class PermissionRequestActivity extends Activity {
     private WearableAPIHelper mWearableAPIHelper;
     private String mResponseDataPath;
     private String[] mPermissions;
+
+    private boolean mResponseSent = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +73,15 @@ public class PermissionRequestActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
 
+        if (!mResponseSent) {
+            DataMap dataMap = new DataMap();
+            dataMap.putBoolean(Constants.DATA_KEY_PERMISSION, false);
+            dataMap.putLong(Constants.DATA_KEY_TIMESTAMP, System.currentTimeMillis());
+            if (mWearableAPIHelper != null) {
+                mWearableAPIHelper.putDataMap(mResponseDataPath, dataMap, null);
+            }
+        }
+
         if(null != mWearableAPIHelper) {
             mWearableAPIHelper.onDestroy();
         }
@@ -79,10 +92,14 @@ public class PermissionRequestActivity extends Activity {
 
         findViewById(R.id.educational_companion_layout_root).setBackgroundColor(eo.getBackgroundColor());
 
-//        if(-1 != eo.getResourceId()) {
-//            ((ImageView) findViewById(R.id.educational_companion_image)).setImageDrawable(
-//                    getApplicationContext().getResources().getDrawable(eo.getResourceId()));
-//        }
+        if(-1 != eo.getResourceId()) {
+            try {
+                ((ImageView) findViewById(R.id.educational_companion_image)).setImageDrawable(
+                        getApplicationContext().getResources().getDrawable(eo.getResourceId()));
+            } catch (Resources.NotFoundException nfe) {
+                nfe.printStackTrace();
+            }
+        }
 
         TextView t1 = (TextView) findViewById(R.id.educational_companion_textview1);
         t1.setTextColor(eo.getTextColor());
@@ -125,6 +142,7 @@ public class PermissionRequestActivity extends Activity {
         if (mWearableAPIHelper != null) {
             mWearableAPIHelper.putDataMap(responsePath, dataMap, null);
         }
+        mResponseSent = true;
         finish();
     }
 }

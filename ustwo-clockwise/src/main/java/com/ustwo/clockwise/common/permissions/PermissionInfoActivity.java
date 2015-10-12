@@ -3,10 +3,12 @@ package com.ustwo.clockwise.common.permissions;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.wearable.activity.ConfirmationActivity;
 import android.support.wearable.view.WatchViewStub;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -87,6 +89,13 @@ public class PermissionInfoActivity extends Activity {
                         finish();
                     }
                 });
+
+                ImageButton button = (ImageButton)findViewById(R.id.permission_info_imagebutton_confirm);
+                if(textColor == Color.WHITE) {
+                    button.setColorFilter(bgColor, PorterDuff.Mode.MULTIPLY);
+                } else {
+                    button.setColorFilter(textColor, PorterDuff.Mode.MULTIPLY);
+                }
 
                 ((TextView) findViewById(R.id.permission_info_textview_confirm)).setTextColor(textColor);
             }
