@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="@string/educational_screen_wearable_default"
+            android:fontFamily="sans-serif-condensed"
             android:textSize="20dp"
             android:textColor="@color/white" />
 
@@ -41,7 +42,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:text="@string/educational_screen_wearable_open_on_phone"
-                android:textSize="14dp"
+                android:fontFamily="sans-serif-condensed"
+                android:textSize="18dp"
                 android:textColor="@color/white" />
         </LinearLayout>
     </LinearLayout>
