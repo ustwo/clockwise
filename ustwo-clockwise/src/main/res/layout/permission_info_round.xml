@@ -6,14 +6,13 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:layout_marginTop="30dp"
         android:layout_marginBottom="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp">
+        android:layout_marginLeft="33.333dp"
+        android:layout_marginRight="33.333dp">
 
         <TextView
             android:id="@+id/permission_info_textview_message"
@@ -22,20 +21,21 @@
             android:gravity="center_horizontal"
             android:text="@string/educational_screen_wearable_default"
             android:fontFamily="sans-serif-condensed"
-            android:textSize="20dp"
+            android:textSize="20.667dp"
             android:textColor="@color/white" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:layout_marginTop="18dp">
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/permission_info_imagebutton_confirm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:paddingRight="2dp"
                 android:src="@drawable/ic_open_on_phone"
                 android:background="@drawable/open_on_phone_bg" />
 
@@ -46,8 +46,8 @@
                 android:layout_marginLeft="10dp"
                 android:text="@string/educational_screen_wearable_open_on_phone"
                 android:fontFamily="sans-serif-condensed"
-                android:textSize="18dp"
+                android:textSize="16dp"
                 android:textColor="@color/white" />
         </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 </android.support.wearable.view.BoxInsetLayout>

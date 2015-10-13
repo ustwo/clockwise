@@ -10,8 +10,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataMap;
 import com.ustwo.clockwise.R;
 import com.ustwo.clockwise.common.Constants;
@@ -35,19 +33,7 @@ public class PermissionRequestActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mWearableAPIHelper = new WearableAPIHelper(this, new WearableAPIHelper.WearableAPIHelperListener() {
-            @Override
-            public void onWearableAPIConnected(GoogleApiClient apiClient) {
-            }
-
-            @Override
-            public void onWearableAPIConnectionSuspended(int cause) {
-            }
-
-            @Override
-            public void onWearableAPIConnectionFailed(ConnectionResult result) {
-            }
-        });
+        mWearableAPIHelper = new WearableAPIHelper(this, null);
 
         mResponseDataPath = getIntent().getStringExtra(EXTRA_RESPONSE_DATA_PATH);
         mPermissions = getIntent().getStringArrayExtra(EXTRA_PERMISSIONS);

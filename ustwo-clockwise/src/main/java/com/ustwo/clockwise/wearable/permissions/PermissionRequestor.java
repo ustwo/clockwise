@@ -86,7 +86,7 @@ public class PermissionRequestor implements DataApi.DataListener {
             }
         });
 
-        Wearable.DataApi.addListener(mWearableAPIHelper.getGoogleApiClient(), this);
+        Wearable.DataApi.addListener(mWearableAPIHelper.getGoogleApiClient(), PermissionRequestor.this);
     }
 
     private void showWearableEducationalScreen() {
@@ -167,6 +167,7 @@ public class PermissionRequestor implements DataApi.DataListener {
                     requestCompanionPermission(false);
                 } else {
                     handlePermissionDenied();
+                    killApiClient();
                 }
             }
         }

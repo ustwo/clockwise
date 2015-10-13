@@ -34,19 +34,7 @@ public class PermissionInfoActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mWearableAPIHelper = new WearableAPIHelper(this, new WearableAPIHelper.WearableAPIHelperListener() {
-            @Override
-            public void onWearableAPIConnected(GoogleApiClient apiClient) {
-            }
-
-            @Override
-            public void onWearableAPIConnectionSuspended(int cause) {
-            }
-
-            @Override
-            public void onWearableAPIConnectionFailed(ConnectionResult result) {
-            }
-        });
+        mWearableAPIHelper = new WearableAPIHelper(this, null);
 
         setContentView(R.layout.permission_info);
 
