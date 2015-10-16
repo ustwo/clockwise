@@ -29,10 +29,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
@@ -41,96 +38,31 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Wearable;
 import com.ustwo.clockwise.common.Constants;
 import com.ustwo.clockwise.common.WearableAPIHelper;
-import com.ustwo.clockwise.common.permissions.EducationalObject;
-import com.ustwo.clockwise.common.permissions.PermissionInfoActivity;
 import com.ustwo.clockwise.common.permissions.PermissionRequestActivity;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class PermissionRequestor implements DataApi.DataListener {
     private static final String TAG = PermissionRequestor.class.getSimpleName();
 
-    private WearableAPIHelper mWearableAPIHelper;
     private Context mContext;
+    private WearableAPIHelper mWearableAPIHelper;
+    private PermissionRequest mRequest;
+    private PermissionResponse mResponse;
     private PermissionRequestListener mListener;
-    private String mPermission;
-    private EducationalObject mEducationalObject;
 
-    public PermissionRequestor(Context context, PermissionRequestListener listener) {
+    private List<String> mWearablePermissionsToRequest = new ArrayList<>();
+    private List<String> mCompanionPermissionsToRequest = new ArrayList<>();
+
+    private HashMap<String, Boolean> mCompanionPermissionResults = new HashMap<>();
+
+    public PermissionRequestor(Context context) {
         mContext = context;
-        mListener = listener;
-    }
 
-    public void requestPermission(final String permission, final boolean onPhone) {
-        requestPermission(permission, onPhone, null);
-    }
-
-    public void requestPermission(final String permission, final boolean onPhone, EducationalObject eo) {
-        mPermission = permission;
-        mEducationalObject = eo;
-
-        mWearableAPIHelper = new WearableAPIHelper(mContext, new WearableAPIHelper.WearableAPIHelperListener() {
-            @Override
-            public void onWearableAPIConnected(GoogleApiClient apiClient) {
-                if(onPhone) {
-                    requestCompanionPermission(true);
-                } else {
-                    requestWearablePermission();
-                }
-            }
-
-            @Override
-            public void onWearableAPIConnectionSuspended(int cause) {
-            }
-
-            @Override
-            public void onWearableAPIConnectionFailed(ConnectionResult result) {
-            }
-        });
-
+        mWearableAPIHelper = new WearableAPIHelper(mContext, null);
         Wearable.DataApi.addListener(mWearableAPIHelper.getGoogleApiClient(), PermissionRequestor.this);
-    }
-
-    private void showWearableEducationalScreen() {
-        Intent i = new Intent(mContext.getApplicationContext(), PermissionInfoActivity.class);
-        if(mEducationalObject != null) {
-            i.putExtra(PermissionInfoActivity.EXTRA_BG_COLOR, mEducationalObject.getBackgroundColor());
-            i.putExtra(PermissionInfoActivity.EXTRA_TEXT_COLOR, mEducationalObject.getTextColor());
-            i.putExtra(PermissionInfoActivity.EXTRA_MESSAGE, mEducationalObject.getEducationalTextWearable());
-        }
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mContext.getApplicationContext().startActivity(i);
-    }
-
-    private void requestCompanionPermission(final boolean justChecking) {
-        Log.v(TAG, "requestCompanionPermission: " + mPermission);
-
-        if(mWearableAPIHelper != null) {
-            DataMap dataMap = new DataMap();
-            dataMap.putString(Constants.DATA_KEY_PERMISSION, mPermission);
-            dataMap.putBoolean(Constants.DATA_KEY_JUST_CHECKING, justChecking);
-            if (null != mEducationalObject) {
-                dataMap.putString(Constants.DATA_KEY_EDUCATIONAL_TEXT1, mEducationalObject.getEducationalText1Companion());
-                dataMap.putString(Constants.DATA_KEY_EDUCATIONAL_TEXT2, mEducationalObject.getEducationalText2Companion());
-                dataMap.putInt(Constants.DATA_KEY_EDUCATIONAL_BG_COLOR, mEducationalObject.getBackgroundColor());
-                dataMap.putInt(Constants.DATA_KEY_EDUCATIONAL_TEXT_COLOR, mEducationalObject.getTextColor());
-                dataMap.putStringArray(Constants.DATA_KEY_EDUCATIONAL_RESOURCE_ID, mEducationalObject.getResource());
-            }
-            dataMap.putLong(Constants.DATA_KEY_TIMESTAMP, System.currentTimeMillis());
-            mWearableAPIHelper.putMessage(Constants.DATA_PATH_COMPANION_PERMISSION_REQUEST, dataMap.toByteArray(), null);
-        }
-    }
-
-    private void requestWearablePermission() {
-        Log.v(TAG, "requestWearablePermission: " + mPermission);
-
-        if(ContextCompat.checkSelfPermission(mContext, mPermission) == PackageManager.PERMISSION_GRANTED) {
-            handlePermissionGranted();
-        } else {
-            Intent i = new Intent(mContext.getApplicationContext(), PermissionRequestActivity.class);
-            i.putExtra(PermissionRequestActivity.EXTRA_RESPONSE_DATA_PATH, Constants.DATA_PATH_WEARABLE_PERMISSION_RESPONSE);
-            i.putExtra(PermissionRequestActivity.EXTRA_PERMISSIONS, new String[] { mPermission });
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mContext.getApplicationContext().startActivity(i);
-        }
     }
 
     private void killApiClient() {
@@ -140,61 +72,173 @@ public class PermissionRequestor implements DataApi.DataListener {
         }
     }
 
+    public void request(PermissionRequest request, PermissionRequestListener listener) {
+        mRequest = request;
+        mListener = listener;
+
+        mWearablePermissionsToRequest = new ArrayList<>(mRequest.getWearablePermissions());
+        mCompanionPermissionsToRequest = new ArrayList<>(mRequest.getCompanionPermissions());
+        mResponse = new PermissionResponse();
+
+        requestNextPermission();
+    }
+
+    private void requestNextPermission() {
+        if(mWearablePermissionsToRequest.size() > 0) {
+            final String permission = mWearablePermissionsToRequest.get(0);
+            requestWearablePermission(permission);
+        } else if(mCompanionPermissionsToRequest.size() > 0) {
+            requestCompanionPermissions(true);
+        } else {
+            checkComplete();
+        }
+    }
+
+    private void requestWearablePermission(String permission) {
+        if(ContextCompat.checkSelfPermission(mRequest.getContext(), permission) == PackageManager.PERMISSION_GRANTED) {
+            handleWearablePermissionGranted(permission);
+        } else {
+            Intent i = new Intent(mRequest.getContext().getApplicationContext(), PermissionRequestActivity.class);
+            i.putExtra(PermissionRequestActivity.EXTRA_WEARABLE_PERMISSION, permission);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mRequest.getContext().getApplicationContext().startActivity(i);
+        }
+    }
+
+    private void requestCompanionPermissions(final boolean justChecking) {
+        if(mWearableAPIHelper != null) {
+            DataMap dataMap = new DataMap();
+            dataMap.putBoolean(Constants.DATA_KEY_JUST_CHECKING, justChecking);
+            dataMap.putByteArray(Constants.DATA_KEY_PERMISSION_REQUEST, mRequest.serialize());
+
+            dataMap.putLong(Constants.DATA_KEY_TIMESTAMP, System.currentTimeMillis());
+            mWearableAPIHelper.putMessage(Constants.DATA_PATH_COMPANION_PERMISSION_REQUEST, dataMap.toByteArray(), null);
+        }
+    }
+
+
+    private void showWearableEducationalScreen() {
+        Intent i = new Intent(mRequest.getContext().getApplicationContext(), WearablePermissionEducationActivity.class);
+        i.putExtra(WearablePermissionEducationActivity.EXTRA_PERMISSION_REQUEST, mRequest.serialize());
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mRequest.getContext().getApplicationContext().startActivity(i);
+    }
+
     @Override
     public void onDataChanged(DataEventBuffer dataEventBuffer) {
         for (DataEvent event : dataEventBuffer) {
             Uri uri = event.getDataItem().getUri();
-            boolean wearableResponse = uri.getPath().endsWith(Constants.DATA_PATH_WEARABLE_PERMISSION_RESPONSE);
-            boolean companionResponse = uri.getPath().endsWith(Constants.DATA_PATH_COMPANION_PERMISSION_RESPONSE);
-            if(wearableResponse || companionResponse) {
+            if(uri.getPath().endsWith(Constants.DATA_PATH_WEARABLE_PERMISSION_RESPONSE)) {
                 DataMap dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
-                boolean granted = dataMap.getBoolean(Constants.DATA_KEY_PERMISSION, false);
-                if(granted) {
-                    handlePermissionGranted();
-                } else {
-                    handlePermissionDenied();
+                String permissionName = dataMap.getString(Constants.DATA_KEY_WEARABLE_PERMISSION);
+                boolean granted = dataMap.getBoolean(Constants.DATA_KEY_WEARABLE_PERMISSION_GRANTED, false);
+                if (granted)
+                    handleWearablePermissionGranted(permissionName);
+                else
+                    handleWearablePermissionDenied(permissionName);
+            } else if(uri.getPath().endsWith(Constants.DATA_PATH_COMPANION_PERMISSION_RESPONSE)) {
+                DataMap dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
+                ArrayList<DataMap> resultMaps = dataMap.getDataMapArrayList(Constants.DATA_KEY_COMPANION_PERMISSION_RESULTS);
+                mCompanionPermissionResults.clear();
+                for(DataMap resultMap : resultMaps) {
+                    String permissionName = resultMap.getString(Constants.DATA_KEY_COMPANION_PERMISSION);
+                    boolean granted = resultMap.getBoolean(Constants.DATA_KEY_COMPANION_PERMISSION_GRANTED, false);
+                    mCompanionPermissionResults.put(permissionName, granted);
+                    if (granted)
+                        handleCompanionPermissionGranted(permissionName);
+                    else
+                        handleCompanionPermissionDenied(permissionName);
                 }
             } else if(uri.getPath().endsWith(Constants.DATA_PATH_INSTANT_COMPANION_PERMISSION_RESPONSE)) {
                 DataMap dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
-                boolean granted = dataMap.getBoolean(Constants.DATA_KEY_PERMISSION, false);
-                if(!granted) {
+                ArrayList<DataMap> resultMaps = dataMap.getDataMapArrayList(Constants.DATA_KEY_COMPANION_PERMISSION_RESULTS);
+                boolean requestCompanionPermissions = false;
+                mCompanionPermissionResults.clear();
+                for(DataMap resultMap : resultMaps) {
+                    String permissionName = resultMap.getString(Constants.DATA_KEY_COMPANION_PERMISSION);
+                    boolean granted = resultMap.getBoolean(Constants.DATA_KEY_COMPANION_PERMISSION_GRANTED, false);
+                    mCompanionPermissionResults.put(permissionName, granted);
+                    if (!granted) {
+                        requestCompanionPermissions = true;
+                    }
+                }
+                if(requestCompanionPermissions) {
                     showWearableEducationalScreen();
+                } else {
+                    acceptAllCompanionPermissionsAndComplete();
                 }
             } else if(uri.getPath().endsWith(Constants.DATA_PATH_PERMISSION_INFO_RESPONSE)) {
                 DataMap dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
                 boolean openOnPhone = dataMap.getBoolean(Constants.DATA_KEY_OPEN_ON_PHONE, false);
                 if(openOnPhone) {
-                    requestCompanionPermission(false);
+                    requestCompanionPermissions(false);
                 } else {
-                    handlePermissionDenied();
-                    killApiClient();
+                    for(String permission : mCompanionPermissionResults.keySet()) {
+                        boolean granted = mCompanionPermissionResults.get(permission);
+                        if (granted)
+                            handleCompanionPermissionGranted(permission);
+                        else
+                            handleCompanionPermissionDenied(permission);
+                    }
                 }
             }
         }
     }
 
-    private void handlePermissionGranted() {
-        if(mListener != null) {
-            mListener.onPermissionGranted();
-        }
-
-        if(mWearableAPIHelper != null) {
-            killApiClient();
-        }
+    private void handleWearablePermissionGranted(String permission) {
+        mResponse.getWearablePermissionResults().put(permission, true);
+        mWearablePermissionsToRequest.remove(permission);
+        requestNextPermission();
     }
 
-    private void handlePermissionDenied() {
-        if(mListener != null) {
-            mListener.onPermissionDenied();
-        }
+    private void handleWearablePermissionDenied(String permission) {
+        mResponse.getWearablePermissionResults().put(permission, false);
+        mWearablePermissionsToRequest.remove(permission);
+        requestNextPermission();
+    }
 
-        if(mWearableAPIHelper != null) {
-            killApiClient();
+    private void handleCompanionPermissionGranted(String permission) {
+        mResponse.getCompanionPermissionResults().put(permission, true);
+        mCompanionPermissionsToRequest.remove(permission);
+        checkComplete();
+    }
+
+    private void handleCompanionPermissionDenied(String permission) {
+        mResponse.getCompanionPermissionResults().put(permission, false);
+        mCompanionPermissionsToRequest.remove(permission);
+        checkComplete();
+    }
+
+    private void acceptAllCompanionPermissionsAndComplete() {
+        for(String permission : mCompanionPermissionsToRequest) {
+            if(!mResponse.getCompanionPermissionResults().containsKey(permission)) {
+                mResponse.getCompanionPermissionResults().put(permission, true);
+            }
+        }
+        mCompanionPermissionsToRequest.clear();
+        checkComplete();
+    }
+
+    private void denyAllCompanionPermissionsAndComplete() {
+        for(String permission : mCompanionPermissionsToRequest) {
+            if(!mResponse.getCompanionPermissionResults().containsKey(permission)) {
+                mResponse.getCompanionPermissionResults().put(permission, false);
+            }
+        }
+        mCompanionPermissionsToRequest.clear();
+        checkComplete();
+    }
+
+    private void checkComplete() {
+        if(mWearablePermissionsToRequest.size() == 0 && mCompanionPermissionsToRequest.size() == 0) {
+            if(mListener != null) {
+                mListener.onCompleted(mResponse);
+                killApiClient();
+            }
         }
     }
 
     public interface PermissionRequestListener {
-        void onPermissionGranted();
-        void onPermissionDenied();
+        void onCompleted(PermissionResponse response);
     }
 }

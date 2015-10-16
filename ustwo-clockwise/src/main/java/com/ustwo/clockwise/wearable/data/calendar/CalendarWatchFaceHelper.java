@@ -37,7 +37,9 @@ import android.provider.CalendarContract;
 import android.support.v4.content.ContextCompat;
 import android.support.wearable.provider.WearableCalendarContract;
 
+import com.ustwo.clockwise.wearable.permissions.PermissionRequest;
 import com.ustwo.clockwise.wearable.permissions.PermissionRequestor;
+import com.ustwo.clockwise.wearable.permissions.PermissionResponse;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -143,23 +145,26 @@ public class CalendarWatchFaceHelper {
     }
 
     public void updateCalendarEvents() {
-        PermissionRequestor requestor = new PermissionRequestor(mContext, new PermissionRequestor.PermissionRequestListener() {
+        PermissionRequest request = new PermissionRequest.PermissionRequestBuilder(mContext)
+                .addWearablePermission(Manifest.permission.READ_CALENDAR)
+                .build();
+        final PermissionRequestor requestor = new PermissionRequestor(mContext);
+        requestor.request(request, new PermissionRequestor.PermissionRequestListener() {
             @Override
-            public void onPermissionGranted() {
-                if(mListener != null) {
-                    mListener.onPermissionGranted();
-                }
-                doUpdateCalendarEvents();
-            }
+            public void onCompleted(PermissionResponse response) {
 
-            @Override
-            public void onPermissionDenied() {
-                if(mListener != null) {
-                    mListener.onPermissionDenied();
+                if(response.getWearablePermissionResults().get(Manifest.permission.READ_CALENDAR)) {
+                    if(mListener != null) {
+                        mListener.onPermissionGranted();
+                    }
+                    doUpdateCalendarEvents();
+                } else {
+                    if(mListener != null) {
+                        mListener.onPermissionDenied();
+                    }
                 }
             }
         });
-        requestor.requestPermission(Manifest.permission.READ_CALENDAR, false);
     }
 
     private void doUpdateCalendarEvents() {

@@ -41,7 +41,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
         <activity
-            android:name=".common.permissions.PermissionInfoActivity"
+            android:name=".wearable.permissions.WearablePermissionEducationActivity"
             android:label=""
             android:theme="@android:style/Theme.DeviceDefault.NoActionBar"/>
 
