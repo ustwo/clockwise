@@ -159,7 +159,8 @@ public class PermissionRequestActivity extends Activity {
         dataMap.putString(Constants.DATA_KEY_WEARABLE_PERMISSION, mWearablePermission);
         dataMap.putBoolean(Constants.DATA_KEY_WEARABLE_PERMISSION_GRANTED, granted);
         if (mWearableAPIHelper != null) {
-            mWearableAPIHelper.putDataMap(Constants.DATA_PATH_WEARABLE_PERMISSION_RESPONSE, dataMap, null);
+            mWearableAPIHelper.putMessage(Constants.DATA_PATH_WEARABLE_PERMISSION_RESPONSE, dataMap.toByteArray(), null);
+            //mWearableAPIHelper.putDataMap(Constants.DATA_PATH_WEARABLE_PERMISSION_RESPONSE, dataMap, null);
         }
         finish();
     }
@@ -177,7 +178,8 @@ public class PermissionRequestActivity extends Activity {
         dataMap.putDataMapArrayList(Constants.DATA_KEY_COMPANION_PERMISSION_RESULTS, results);
         if (mWearableAPIHelper != null) {
             String path = mJustCheckingCompanion ? Constants.DATA_PATH_INSTANT_COMPANION_PERMISSION_RESPONSE : Constants.DATA_PATH_COMPANION_PERMISSION_RESPONSE;
-            mWearableAPIHelper.putDataMap(path, dataMap, null);
+            mWearableAPIHelper.putMessage(path, dataMap.toByteArray(), null);
+            //mWearableAPIHelper.putDataMap(path, dataMap, null);
         }
         finish();
     }

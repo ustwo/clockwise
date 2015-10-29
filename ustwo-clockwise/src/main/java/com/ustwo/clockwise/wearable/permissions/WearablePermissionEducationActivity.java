@@ -59,7 +59,8 @@ public class WearablePermissionEducationActivity extends Activity {
                         dataMap.putBoolean(Constants.DATA_KEY_OPEN_ON_PHONE, true);
                         dataMap.putLong(Constants.DATA_KEY_TIMESTAMP, System.currentTimeMillis());
                         if (mWearableAPIHelper != null) {
-                            mWearableAPIHelper.putDataMap(Constants.DATA_PATH_PERMISSION_INFO_RESPONSE, dataMap, null);
+                            mWearableAPIHelper.putMessageToNode(mWearableAPIHelper.getLocalNodeId(), Constants.DATA_PATH_PERMISSION_INFO_RESPONSE, dataMap.toByteArray(), null);
+                            //mWearableAPIHelper.putDataMap(Constants.DATA_PATH_PERMISSION_INFO_RESPONSE, dataMap, null);
                             mAccepted = true;
                         }
 
@@ -92,7 +93,8 @@ public class WearablePermissionEducationActivity extends Activity {
             dataMap.putBoolean(Constants.DATA_KEY_OPEN_ON_PHONE, false);
             dataMap.putLong(Constants.DATA_KEY_TIMESTAMP, System.currentTimeMillis());
             if (mWearableAPIHelper != null) {
-                mWearableAPIHelper.putDataMap(Constants.DATA_PATH_PERMISSION_INFO_RESPONSE, dataMap, null);
+                mWearableAPIHelper.putMessageToNode(mWearableAPIHelper.getLocalNodeId(), Constants.DATA_PATH_PERMISSION_INFO_RESPONSE, dataMap.toByteArray(), null);
+                //mWearableAPIHelper.putDataMap(Constants.DATA_PATH_PERMISSION_INFO_RESPONSE, dataMap, null);
             }
         }
 

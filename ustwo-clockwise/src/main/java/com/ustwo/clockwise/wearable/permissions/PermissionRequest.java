@@ -24,6 +24,7 @@ public class PermissionRequest implements Serializable {
     private final String companionEducationSecondaryText;
     private final String companionEducationImageResource;
     private final String companionEducationImageResourcePackage;
+    private final boolean requestSilently;
 
     public static class PermissionRequestBuilder {
         private transient Context context = null;
@@ -36,6 +37,7 @@ public class PermissionRequest implements Serializable {
         private String companionEducationSecondaryText = null;
         private String companionEducationImageResource = null;
         private String companionEducationImageResourcePackage = null;
+        private boolean requestSilently = false;
 
         public PermissionRequestBuilder(Context context) {
             this.context = context;
@@ -82,6 +84,11 @@ public class PermissionRequest implements Serializable {
             return this;
         }
 
+        public PermissionRequestBuilder setRequestSilently(boolean requestSilently) {
+            this.requestSilently = requestSilently;
+            return this;
+        }
+
         public PermissionRequest build() {
             return new PermissionRequest(this);
         }
@@ -98,6 +105,7 @@ public class PermissionRequest implements Serializable {
         this.companionEducationSecondaryText = builder.companionEducationSecondaryText;
         this.companionEducationImageResource = builder.companionEducationImageResource;
         this.companionEducationImageResourcePackage = builder.companionEducationImageResourcePackage;
+        this.requestSilently = builder.requestSilently;
     }
 
     public Context getContext() {
@@ -138,6 +146,10 @@ public class PermissionRequest implements Serializable {
 
     public String getCompanionEducationImageResourcePackage() {
         return companionEducationImageResourcePackage;
+    }
+
+    public boolean shouldRequestSilently() {
+        return requestSilently;
     }
 
     public byte[] serialize() {
