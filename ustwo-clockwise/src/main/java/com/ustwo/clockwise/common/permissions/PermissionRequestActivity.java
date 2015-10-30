@@ -159,7 +159,7 @@ public class PermissionRequestActivity extends Activity {
         dataMap.putString(Constants.DATA_KEY_WEARABLE_PERMISSION, mWearablePermission);
         dataMap.putBoolean(Constants.DATA_KEY_WEARABLE_PERMISSION_GRANTED, granted);
         if (mWearableAPIHelper != null) {
-            mWearableAPIHelper.putMessage(Constants.DATA_PATH_WEARABLE_PERMISSION_RESPONSE, dataMap.toByteArray(), null);
+            mWearableAPIHelper.putMessageToNode(mWearableAPIHelper.getLocalNodeId(), Constants.DATA_PATH_WEARABLE_PERMISSION_RESPONSE, dataMap.toByteArray(), null);
             //mWearableAPIHelper.putDataMap(Constants.DATA_PATH_WEARABLE_PERMISSION_RESPONSE, dataMap, null);
         }
         finish();
