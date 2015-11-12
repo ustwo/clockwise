@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
@@ -14,25 +15,24 @@ import com.google.android.gms.wearable.DataMap;
 import com.ustwo.clockwise.R;
 import com.ustwo.clockwise.common.Constants;
 import com.ustwo.clockwise.common.WearableAPIHelper;
-import com.ustwo.clockwise.wearable.permissions.PermissionRequest;
+import com.ustwo.clockwise.wearable.permissions.PermissionsRequest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class PermissionRequestActivity extends Activity {
-    public static final String EXTRA_WEARABLE_PERMISSION = "extra_wearable_permission";
     public static final String EXTRA_COMPANION_JUST_CHECKING = "extra_companion_just_checking";
     public static final String EXTRA_PERMISSION_REQUEST = "extra_permission_request";
 
     private static final int REQUEST_CODE = 21;
 
     private WearableAPIHelper mWearableAPIHelper;
-    private PermissionRequest mPermissionRequest;
-    private boolean mIsWearableMode = false;
-    private String mWearablePermission;
 
     private boolean mJustCheckingCompanion = false;
+    private PermissionsRequest mPermissionsRequest;
+    private PermissionRequestItem mWearablePermission = null;
+
     private HashMap<String, Boolean> mCompanionPermissionResults = new HashMap<>();
     private List<String> mCheckedCompanionPermissions = new ArrayList<>();
 
@@ -42,32 +42,42 @@ public class PermissionRequestActivity extends Activity {
 
         mWearableAPIHelper = new WearableAPIHelper(this, null);
 
-        mWearablePermission = getIntent().getStringExtra(EXTRA_WEARABLE_PERMISSION);
-        mPermissionRequest = PermissionRequest.deserialize(getIntent().getByteArrayExtra(EXTRA_PERMISSION_REQUEST));
-        mIsWearableMode = (null != mWearablePermission && !mWearablePermission.isEmpty());
         mJustCheckingCompanion = getIntent().getBooleanExtra(EXTRA_COMPANION_JUST_CHECKING, false);
-
-        if(mIsWearableMode) {
-            // WEARABLE
-            if(ContextCompat.checkSelfPermission(this, mWearablePermission) == PackageManager.PERMISSION_GRANTED) {
-                sendWearableResponse(true);
-            } else {
-                ActivityCompat.requestPermissions(PermissionRequestActivity.this, new String[]{mWearablePermission}, REQUEST_CODE);
+        mPermissionsRequest = PermissionsRequest.deserialize(getIntent().getByteArrayExtra(EXTRA_PERMISSION_REQUEST));
+        if(mPermissionsRequest == null || mPermissionsRequest.getRequestItems().size() == 0) {
+            throw new IllegalArgumentException();
+        } else {
+            if(mPermissionsRequest.getRequestItems().get(0).isWearable()) {
+                mWearablePermission = mPermissionsRequest.getRequestItems().get(0);
             }
-        } else if(mPermissionRequest != null) {
-            for(String companionPermission : mPermissionRequest.getCompanionPermissions()) {
-                if(ContextCompat.checkSelfPermission(this, companionPermission) == PackageManager.PERMISSION_GRANTED) {
-                    mCompanionPermissionResults.put(companionPermission, true);
+
+            if (mWearablePermission != null && mWearablePermission.getPermissions().size() > 0) {
+                // WEARABLE
+                String wearablePermission = mWearablePermission.getPermissions().get(0);
+                if (ContextCompat.checkSelfPermission(this, wearablePermission) == PackageManager.PERMISSION_GRANTED) {
+                    sendWearableResponse(true);
                 } else {
-                    mCompanionPermissionResults.put(companionPermission, false);
+                    ActivityCompat.requestPermissions(PermissionRequestActivity.this, new String[]{wearablePermission}, REQUEST_CODE);
                 }
-            }
-
-            // COMPANION
-            if(mJustCheckingCompanion) {
-                sendCompanionResponse();
             } else {
-                showEducationalScreen();
+                // COMPANION
+                for (PermissionRequestItem requestItem : mPermissionsRequest.getRequestItems()) {
+                    if(requestItem.isWearable()) continue;
+
+                    for(String companionPermission : requestItem.getPermissions()) {
+                        if (ContextCompat.checkSelfPermission(this, companionPermission) == PackageManager.PERMISSION_GRANTED) {
+                            mCompanionPermissionResults.put(companionPermission, true);
+                        } else {
+                            mCompanionPermissionResults.put(companionPermission, false);
+                        }
+                    }
+                }
+
+                if (mJustCheckingCompanion) {
+                    sendCompanionResponse();
+                } else {
+                    requestNextCompanionPermission();
+                }
             }
         }
     }
@@ -80,59 +90,16 @@ public class PermissionRequestActivity extends Activity {
         }
     }
 
-    private void showEducationalScreen() {
-        setContentView(R.layout.educational_companion);
-
-        findViewById(R.id.educational_companion_layout_root).setBackgroundColor(mPermissionRequest.getEducationBackgroundColor());
-
-        if(null != mPermissionRequest.getCompanionEducationImageResource()) {
-            try {
-                ((ImageView) findViewById(R.id.educational_companion_image)).setImageDrawable(getApplicationContext().getResources().getDrawable(
-                        getApplicationContext().getResources().getIdentifier(mPermissionRequest.getCompanionEducationImageResource(),
-                                "drawable", mPermissionRequest.getCompanionEducationImageResourcePackage())));
-            } catch (Resources.NotFoundException nfe) {
-                nfe.printStackTrace();
-            }
-        }
-
-        TextView t1 = (TextView) findViewById(R.id.educational_companion_textview1);
-        t1.setTextColor(mPermissionRequest.getEducationTextColor());
-        t1.setText(mPermissionRequest.getCompanionEducationPrimaryText());
-
-        TextView t2 = (TextView) findViewById(R.id.educational_companion_textview2);
-        t2.setTextColor(mPermissionRequest.getEducationTextColor());
-        t2.setText(mPermissionRequest.getCompanionEducationSecondaryText());
-
-        TextView positiveButton = (TextView)findViewById(R.id.educational_companion_positive_button);
-        positiveButton.setTextColor(mPermissionRequest.getEducationTextColor());
-        positiveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requestNextCompanionPermission();
-            }
-        });
-
-        TextView negativeButton = (TextView)findViewById(R.id.educational_companion_negative_button);
-        negativeButton.setTextColor(mPermissionRequest.getEducationTextColor());
-        negativeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendCompanionResponse();
-            }
-        });
-    }
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        String permission = permissions[0];
-        boolean granted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode == REQUEST_CODE) {
-            if(mIsWearableMode) {
-                sendWearableResponse(granted);
+            if(mWearablePermission != null) {
+                sendWearableResponse(grantResults[0] == PackageManager.PERMISSION_GRANTED);
             } else {
-                mCheckedCompanionPermissions.add(permission);
-                mCompanionPermissionResults.put(permission, granted);
+                for(int i=0; i<permissions.length; i++) {
+                    mCheckedCompanionPermissions.add(permissions[i]);
+                    mCompanionPermissionResults.put(permissions[i], grantResults[i] == PackageManager.PERMISSION_GRANTED);
+                }
                 requestNextCompanionPermission();
             }
         }
@@ -140,11 +107,21 @@ public class PermissionRequestActivity extends Activity {
 
     private void requestNextCompanionPermission() {
         boolean noMorePermissions = true;
-        for(String companionPermission : mCompanionPermissionResults.keySet()) {
-            // grab next companion permission that hasn't been accepted or checked
-            if(!mCompanionPermissionResults.get(companionPermission) && !mCheckedCompanionPermissions.contains(companionPermission)) {
+        for(PermissionRequestItem requestItem : mPermissionsRequest.getRequestItems()) {
+            if(requestItem.isWearable()) continue;
+
+            boolean request = true;
+            for(String companionPermission : requestItem.getPermissions()) {
+                // grab next companion permission that hasn't been accepted or checked
+                if(mCompanionPermissionResults.get(companionPermission) || mCheckedCompanionPermissions.contains(companionPermission)) {
+                    request = false;
+                    break;
+                }
+            }
+
+            if(request) {
                 noMorePermissions = false;
-                ActivityCompat.requestPermissions(PermissionRequestActivity.this, new String[]{companionPermission}, REQUEST_CODE);
+                showCompanionPermissionEducation(requestItem);
                 break;
             }
         }
@@ -153,10 +130,57 @@ public class PermissionRequestActivity extends Activity {
         }
     }
 
+    private void showCompanionPermissionEducation(final PermissionRequestItem requestItem) {
+        setContentView(R.layout.educational_companion);
+        findViewById(R.id.educational_companion_image_background).setBackgroundColor(requestItem.getEducationLightBackgroundColor());
+        findViewById(R.id.educational_companion_text_background).setBackgroundColor(requestItem.getEducationDarkBackgroundColor());
+
+        if(null != requestItem.getCompanionEducationImageResource()) {
+            try {
+                ((ImageView) findViewById(R.id.educational_companion_image)).setImageDrawable(getApplicationContext().getResources().getDrawable(
+                        getApplicationContext().getResources().getIdentifier(requestItem.getCompanionEducationImageResource(),
+                                "drawable", requestItem.getCompanionEducationImageResourcePackage())));
+            } catch (Resources.NotFoundException nfe) {
+                nfe.printStackTrace();
+            }
+        }
+        TextView t1 = (TextView) findViewById(R.id.educational_companion_primary_text);
+        t1.setTextColor(requestItem.getEducationTextColor());
+        t1.setText(requestItem.getCompanionEducationPrimaryText());
+        TextView t2 = (TextView) findViewById(R.id.educational_companion_secondary_text);
+        t2.setTextColor(requestItem.getEducationTextColor());
+        t2.setText(requestItem.getCompanionEducationSecondaryText());
+        TextView positiveButton = (TextView)findViewById(R.id.educational_companion_positive_button);
+        positiveButton.setTextColor(requestItem.getEducationTextColor());
+        positiveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestCompanionPermission(requestItem);
+            }
+        });
+        TextView negativeButton = (TextView)findViewById(R.id.educational_companion_negative_button);
+        negativeButton.setTextColor(requestItem.getEducationTextColor());
+        negativeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for(String companionPermission : requestItem.getPermissions()) {
+                    mCheckedCompanionPermissions.add(companionPermission);
+                    mCompanionPermissionResults.put(companionPermission, false);
+                }
+                requestNextCompanionPermission();
+            }
+        });
+    }
+
+    private void requestCompanionPermission(PermissionRequestItem requestItem) {
+        String[] permissions = new String[requestItem.getPermissions().size()];
+        ActivityCompat.requestPermissions(PermissionRequestActivity.this, requestItem.getPermissions().toArray(permissions), REQUEST_CODE);
+    }
+
     private void sendWearableResponse(boolean granted) {
         DataMap dataMap = new DataMap();
         dataMap.putLong(Constants.DATA_KEY_TIMESTAMP, System.currentTimeMillis());
-        dataMap.putString(Constants.DATA_KEY_WEARABLE_PERMISSION, mWearablePermission);
+        dataMap.putString(Constants.DATA_KEY_WEARABLE_PERMISSION, mWearablePermission.getPermissions().get(0));
         dataMap.putBoolean(Constants.DATA_KEY_WEARABLE_PERMISSION_GRANTED, granted);
         if (mWearableAPIHelper != null) {
             mWearableAPIHelper.putMessageToNode(mWearableAPIHelper.getLocalNodeId(), Constants.DATA_PATH_WEARABLE_PERMISSION_RESPONSE, dataMap.toByteArray(), null);

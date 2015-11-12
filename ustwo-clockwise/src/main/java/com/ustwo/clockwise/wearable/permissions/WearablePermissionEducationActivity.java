@@ -15,12 +15,14 @@ import com.google.android.gms.wearable.DataMap;
 import com.ustwo.clockwise.R;
 import com.ustwo.clockwise.common.Constants;
 import com.ustwo.clockwise.common.WearableAPIHelper;
+import com.ustwo.clockwise.common.permissions.PermissionRequestItem;
 
 public class WearablePermissionEducationActivity extends Activity {
 
     public static final String EXTRA_PERMISSION_REQUEST = "extra_permission_request";
 
-    private PermissionRequest mPermissionRequest;
+    private PermissionsRequest mPermissionsRequest;
+    private PermissionRequestItem mWearablePermission = null;
 
     private WearableAPIHelper mWearableAPIHelper;
     private boolean mAccepted = false;
@@ -33,8 +35,17 @@ public class WearablePermissionEducationActivity extends Activity {
 
         setContentView(R.layout.permission_info);
 
-        mPermissionRequest = PermissionRequest.deserialize(getIntent().getByteArrayExtra(EXTRA_PERMISSION_REQUEST));
+        mPermissionsRequest = PermissionsRequest.deserialize(getIntent().getByteArrayExtra(EXTRA_PERMISSION_REQUEST));
+        if(mPermissionsRequest == null || mPermissionsRequest.getRequestItems().size() == 0) {
+            throw new IllegalArgumentException();
+        } else {
+            mWearablePermission = mPermissionsRequest.getRequestItems().get(0);
 
+            init();
+        }
+    }
+
+    private void init() {
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.permission_info_stub);
         // Update the UI in a listener because the layout is using a stub.
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
@@ -42,11 +53,11 @@ public class WearablePermissionEducationActivity extends Activity {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
 
-                findViewById(R.id.permission_info_layout_root).setBackgroundColor(mPermissionRequest.getEducationBackgroundColor());
+                findViewById(R.id.permission_info_layout_root).setBackgroundColor(mWearablePermission.getEducationDarkBackgroundColor());
 
                 TextView tv = (TextView) findViewById(R.id.permission_info_textview_message);
-                tv.setTextColor(mPermissionRequest.getEducationTextColor());
-                String message = mPermissionRequest.getWearableEducationText();
+                tv.setTextColor(mWearablePermission.getEducationTextColor());
+                String message = mWearablePermission.getWearableEducationText();
                 if (null != message && !"".equals(message)) {
                     tv.setText(message);
                 }
@@ -73,14 +84,14 @@ public class WearablePermissionEducationActivity extends Activity {
                     }
                 });
 
-                ImageButton button = (ImageButton)findViewById(R.id.permission_info_imagebutton_confirm);
-                if(mPermissionRequest.getEducationTextColor() == Color.WHITE) {
-                    button.setColorFilter(mPermissionRequest.getEducationBackgroundColor(), PorterDuff.Mode.MULTIPLY);
+                ImageButton button = (ImageButton) findViewById(R.id.permission_info_imagebutton_confirm);
+                if (mWearablePermission.getEducationTextColor() == Color.WHITE) {
+                    button.setColorFilter(mWearablePermission.getEducationDarkBackgroundColor(), PorterDuff.Mode.MULTIPLY);
                 } else {
-                    button.setColorFilter(mPermissionRequest.getEducationTextColor(), PorterDuff.Mode.MULTIPLY);
+                    button.setColorFilter(mWearablePermission.getEducationTextColor(), PorterDuff.Mode.MULTIPLY);
                 }
 
-                ((TextView) findViewById(R.id.permission_info_textview_confirm)).setTextColor(mPermissionRequest.getEducationTextColor());
+                ((TextView) findViewById(R.id.permission_info_textview_confirm)).setTextColor(mWearablePermission.getEducationTextColor());
             }
         });
     }

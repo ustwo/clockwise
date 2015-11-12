@@ -2,7 +2,7 @@ package com.ustwo.clockwise.wearable.permissions;
 
 import java.util.HashMap;
 
-public class PermissionResponse {
+public class PermissionsResponse {
     private HashMap<String, Boolean> mWearablePermissionResults = new HashMap<>();
     private HashMap<String, Boolean> mCompanionPermissionResults = new HashMap<>();
 

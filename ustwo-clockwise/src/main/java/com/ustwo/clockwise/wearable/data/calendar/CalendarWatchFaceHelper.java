@@ -37,9 +37,10 @@ import android.provider.CalendarContract;
 import android.support.v4.content.ContextCompat;
 import android.support.wearable.provider.WearableCalendarContract;
 
-import com.ustwo.clockwise.wearable.permissions.PermissionRequest;
-import com.ustwo.clockwise.wearable.permissions.PermissionRequestor;
-import com.ustwo.clockwise.wearable.permissions.PermissionResponse;
+import com.ustwo.clockwise.common.permissions.PermissionRequestItem;
+import com.ustwo.clockwise.wearable.permissions.PermissionsRequest;
+import com.ustwo.clockwise.wearable.permissions.PermissionsRequestor;
+import com.ustwo.clockwise.wearable.permissions.PermissionsResponse;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -145,15 +146,21 @@ public class CalendarWatchFaceHelper {
     }
 
     public void updateCalendarEvents() {
-        PermissionRequest request = new PermissionRequest.PermissionRequestBuilder(mContext)
-                .addWearablePermission(Manifest.permission.READ_CALENDAR)
-                .build();
-        final PermissionRequestor requestor = new PermissionRequestor(mContext);
-        requestor.request(request, new PermissionRequestor.PermissionRequestListener() {
-            @Override
-            public void onCompleted(PermissionResponse response) {
+        final String permission = Manifest.permission.READ_CALENDAR;
 
-                if(response.getWearablePermissionResults().get(Manifest.permission.READ_CALENDAR)) {
+        PermissionRequestItem requestItem = new PermissionRequestItem();
+        requestItem.setIsWearable(true);
+        requestItem.getPermissions().add(permission);
+        PermissionsRequest request = new PermissionsRequest();
+        request.setContext(mContext);
+        request.getRequestItems().add(requestItem);
+
+        final PermissionsRequestor requestor = new PermissionsRequestor(mContext);
+        requestor.request(request, new PermissionsRequestor.PermissionRequestListener() {
+            @Override
+            public void onCompleted(PermissionsResponse response) {
+
+                if(response.getWearablePermissionResults().get(permission)) {
                     if(mListener != null) {
                         mListener.onPermissionGranted();
                     }

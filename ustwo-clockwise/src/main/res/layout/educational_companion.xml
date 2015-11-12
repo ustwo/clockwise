@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/educational_companion_layout_root"
     android:layout_width="match_parent"
@@ -7,66 +7,87 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="110dp"
-        android:layout_marginLeft="38dp"
-        android:layout_marginRight="130dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/educational_companion_textview1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-condensed"
-            android:textSize="29.333dp"/>
+        <FrameLayout
+            android:id="@+id/educational_companion_image_background"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-        <TextView
-            android:id="@+id/educational_companion_textview2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:fontFamily="sans-serif-condensed"
-            android:textSize="16dp"/>
+            <ImageView
+                android:id="@+id/educational_companion_image"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"/>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/educational_companion_text_background"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/educational_companion_primary_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textSize="30sp"/>
+
+                <TextView
+                    android:id="@+id/educational_companion_secondary_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="bottom">
+
+                <TextView
+                    android:id="@+id/educational_companion_negative_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="18dp"
+                    android:paddingBottom="18dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:text="@string/educational_screen_companion_negative_button_text"/>
+
+                <TextView
+                    android:id="@+id/educational_companion_positive_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="18dp"
+                    android:paddingBottom="18dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:text="@string/educational_screen_companion_positive_button_text"/>
+            </LinearLayout>
+
+        </FrameLayout>
+
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/educational_companion_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="26.667dp"
-        android:layout_alignParentRight="true"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true">
-
-        <TextView
-            android:id="@+id/educational_companion_negative_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingTop="18dp"
-            android:paddingBottom="18dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:fontFamily="sans-serif"
-            android:textStyle="bold"
-            android:textSize="14dp"
-            android:text="@string/educational_screen_companion_negative_button_text"/>
-
-        <TextView
-            android:id="@+id/educational_companion_positive_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingTop="18dp"
-            android:paddingBottom="18dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:fontFamily="sans-serif"
-            android:textStyle="bold"
-            android:textSize="14dp"
-            android:text="@string/educational_screen_companion_positive_button_text"/>
-    </LinearLayout>
-</RelativeLayout>
+</FrameLayout>

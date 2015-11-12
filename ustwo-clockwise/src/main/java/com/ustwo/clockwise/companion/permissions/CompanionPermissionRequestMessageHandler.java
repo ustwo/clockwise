@@ -11,7 +11,8 @@ import com.ustwo.clockwise.common.Constants;
 import com.ustwo.clockwise.common.MessageReceivedHandler;
 import com.ustwo.clockwise.common.WearableAPIHelper;
 import com.ustwo.clockwise.common.permissions.PermissionRequestActivity;
-import com.ustwo.clockwise.wearable.permissions.PermissionRequest;
+import com.ustwo.clockwise.common.permissions.PermissionRequestItem;
+import com.ustwo.clockwise.wearable.permissions.PermissionsRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,21 +30,23 @@ public class CompanionPermissionRequestMessageHandler implements MessageReceived
 
     @Override
     public void onMessageReceived(String path, DataMap map, WearableAPIHelper apiHelper) {
-        Log.v(TAG, "onMessageReceived: " + path);
-
         if(path.equals(Constants.DATA_PATH_COMPANION_PERMISSION_REQUEST)) {
             boolean justChecking = map.getBoolean(Constants.DATA_KEY_JUST_CHECKING);
             byte[] requestBytes = map.getByteArray(Constants.DATA_KEY_PERMISSION_REQUEST);
-            PermissionRequest request = PermissionRequest.deserialize(requestBytes);
+            PermissionsRequest request = PermissionsRequest.deserialize(requestBytes);
 
             // if requesting silently, just get the results and return them instead of invoking the activity
             if(request.shouldRequestSilently()) {
                 HashMap<String, Boolean> companionPermissionResults = new HashMap<>();
-                for(String companionPermission : request.getCompanionPermissions()) {
-                    if(ContextCompat.checkSelfPermission(mContext, companionPermission) == PackageManager.PERMISSION_GRANTED) {
-                        companionPermissionResults.put(companionPermission, true);
-                    } else {
-                        companionPermissionResults.put(companionPermission, false);
+                for(PermissionRequestItem requestItem : request.getRequestItems()) {
+                    if(requestItem.isWearable()) continue;
+
+                    for(String companionPermission : requestItem.getPermissions()) {
+                        if (ContextCompat.checkSelfPermission(mContext, companionPermission) == PackageManager.PERMISSION_GRANTED) {
+                            companionPermissionResults.put(companionPermission, true);
+                        } else {
+                            companionPermissionResults.put(companionPermission, false);
+                        }
                     }
                 }
 
