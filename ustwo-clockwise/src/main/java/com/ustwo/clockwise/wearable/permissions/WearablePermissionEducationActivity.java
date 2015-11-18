@@ -37,7 +37,7 @@ public class WearablePermissionEducationActivity extends Activity {
 
         mPermissionsRequest = PermissionsRequest.deserialize(getIntent().getByteArrayExtra(EXTRA_PERMISSION_REQUEST));
         if(mPermissionsRequest == null || mPermissionsRequest.getRequestItems().size() == 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("You must include at least one PermissionRequestItem in the EXTRA_PERMISSION_REQUEST");
         } else {
             mWearablePermission = mPermissionsRequest.getRequestItems().get(0);
 
