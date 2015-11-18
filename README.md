@@ -52,8 +52,8 @@ If you would like to contribute to Clockwise, please feel free to fork the repos
 [2]:http://wear.ustwo.com
 [3]:https://developer.android.com/design/wear/watchfaces.html
 [4]:https://github.com/ustwo/clockwise/wiki/Getting-Started
-[5]:https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.ustwo.android&a=clockwise-wearable&p=aar&v=LATEST
-[6]:http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.ustwo.android%22%20AND%20a%3A%22clockwise-wearable%22
+[5]:https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.ustwo.android&a=clockwise&p=aar&v=LATEST
+[6]:http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.ustwo.android%22%20AND%20a%3A%22clockwise%22
 [7]:https://github.com/ustwo/Clockwise/blob/master/RELEASES.md
 [8]:https://github.com/ustwo/Clockwise/issues
 [9]:mailto:clockwise@ustwo.com

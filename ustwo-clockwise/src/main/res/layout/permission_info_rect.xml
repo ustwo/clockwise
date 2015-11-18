@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.wearable.view.BoxInsetLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/permission_info_layout_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/permission_info_textview_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
+                android:text="@string/educational_screen_wearable_default"
+                android:fontFamily="sans-serif-condensed"
+                android:textSize="15sp"
+                android:textColor="@color/white" />
+        </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/permission_info_imagebutton_confirm"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:paddingRight="2dp"
+                android:src="@drawable/ic_open_on_phone"
+                android:background="@drawable/open_on_phone_bg" />
+
+            <TextView
+                android:id="@+id/permission_info_textview_confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/educational_screen_wearable_open_on_phone"
+                android:fontFamily="sans-serif-condensed"
+                android:textSize="16dp"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </LinearLayout>
+</android.support.wearable.view.BoxInsetLayout>
