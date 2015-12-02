@@ -82,7 +82,9 @@ public abstract class ConnectedWatchFace extends WatchFace implements MessageApi
             Wearable.NodeApi.removeListener(mApiClient, ConnectedWatchFace.this);
             Wearable.DataApi.removeListener(mApiClient, ConnectedWatchFace.this);
         }
-        mWearableAPIHelper.onDestroy();
+        if(mWearableAPIHelper != null) {
+            mWearableAPIHelper.onDestroy();
+        }
         super.onDestroy();
     }
 
