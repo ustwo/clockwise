@@ -34,6 +34,7 @@ import android.support.wearable.watchface.WatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.WindowInsets;
 
@@ -56,6 +57,8 @@ import java.util.concurrent.TimeUnit;
  * the various hardware considerations in ambient mode.
  */
 public abstract class WatchFace extends WatchFaceService {
+    private static final String TAG = WatchFace.class.getSimpleName();
+
     private final WatchFaceEngine mWatchFaceEngine = new WatchFaceEngine();
     private final Rect mFaceRect = new Rect();
     private boolean mIs24HourFormat = false;
@@ -245,6 +248,8 @@ public abstract class WatchFace extends WatchFaceService {
 
         try {
             onDraw(canvas);
+        } catch(Exception e) {
+            Log.e(TAG, "Exception in WatchFace onDraw", e);
         } finally {
             mWatchFaceEngine.getSurfaceHolder().unlockCanvasAndPost(canvas);
         }
