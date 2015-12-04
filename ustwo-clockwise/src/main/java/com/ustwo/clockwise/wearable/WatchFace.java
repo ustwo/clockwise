@@ -27,9 +27,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Settings;
 import android.support.wearable.watchface.WatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
 import android.text.format.DateFormat;
@@ -67,6 +71,7 @@ public abstract class WatchFace extends WatchFaceService {
     private WatchShape mWatchShape = WatchShape.UNKNOWN;
     private WindowInsets mFaceInsets;
     private boolean mLayoutComplete;
+    private ContentObserver mFormatChangeObserver;
 
     /**
      * Returns the width of the watch face.
@@ -303,11 +308,24 @@ public abstract class WatchFace extends WatchFaceService {
             filter.addAction(Intent.ACTION_DATE_CHANGED);
             filter.addAction(Intent.ACTION_TIME_CHANGED);
             registerReceiver(mDateTimeChangedReceiver, filter);
+
+            if (mFormatChangeObserver == null) {
+                mFormatChangeObserver = new TimeFormatObserver(new Handler());
+                getContentResolver().registerContentObserver(
+                        Settings.System.getUriFor(Settings.System.TIME_12_24), true, mFormatChangeObserver);
+            }
+
         }
 
         @Override
         public void onDestroy() {
             unregisterReceiver(mDateTimeChangedReceiver);
+
+            if (mFormatChangeObserver != null) {
+                getContentResolver().unregisterContentObserver(
+                        mFormatChangeObserver);
+                mFormatChangeObserver = null;
+            }
 
             cancelTimeUpdater();
             mScheduledTimeUpdaterPool.shutdown();
@@ -449,6 +467,22 @@ public abstract class WatchFace extends WatchFaceService {
                 updateTimeAndInvalidate();
             }
             checkTimeUpdater();
+        }
+
+        private class TimeFormatObserver extends ContentObserver {
+            public TimeFormatObserver(Handler handler) {
+                super(handler);
+            }
+
+            @Override
+            public void onChange(boolean selfChange) {
+                updateTimeAndInvalidate();
+            }
+
+            @Override
+            public void onChange(boolean selfChange, Uri uri) {
+                updateTimeAndInvalidate();
+            }
         }
     }
 }
