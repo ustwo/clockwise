@@ -90,16 +90,6 @@ public class PermissionsRequestor implements MessageApi.MessageListener {
 
     private void requestNextPermission() {
         if(mWearablePermissionsToRequest.size() > 0) {
-            requestNextWearablePermission();
-        } else if(mCompanionPermissionsToRequest.size() > 0) {
-            requestCompanionPermissions(true);
-        } else {
-            checkComplete();
-        }
-    }
-
-    private void requestNextWearablePermission() {
-        if(mWearablePermissionsToRequest.size() > 0) {
             PermissionRequestItem request = mWearablePermissionsToRequest.get(0);
             String permission = request.getPermissions().get(0);
             mWearablePermissionsToRequest.remove(request);
@@ -200,12 +190,12 @@ public class PermissionsRequestor implements MessageApi.MessageListener {
 
     private void handleWearablePermissionGranted(String permission) {
         mResponse.getWearablePermissionResults().put(permission, true);
-        requestNextWearablePermission();
+        requestNextPermission();
     }
 
     private void handleWearablePermissionDenied(String permission) {
         mResponse.getWearablePermissionResults().put(permission, false);
-        requestNextWearablePermission();
+        requestNextPermission();
     }
 
     private void handleCompanionPermissionGranted(String permission) {
