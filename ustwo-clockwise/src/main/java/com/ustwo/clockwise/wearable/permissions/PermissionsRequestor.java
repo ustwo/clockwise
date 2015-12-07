@@ -51,9 +51,10 @@ public class PermissionsRequestor implements MessageApi.MessageListener {
     private PermissionsResponse mResponse;
     private PermissionRequestListener mListener;
 
-    private PermissionRequestItem mWearablePermissionToRequest = null;
+    private List<PermissionRequestItem> mWearablePermissionsToRequest = new ArrayList<>();
     private List<PermissionRequestItem> mCompanionPermissionsToRequest = new ArrayList<>();
 
+    private HashMap<String, Boolean> mWearablePermissionResults = new HashMap<>();
     private HashMap<String, Boolean> mCompanionPermissionResults = new HashMap<>();
 
     public PermissionsRequestor(Context context) {
@@ -76,8 +77,7 @@ public class PermissionsRequestor implements MessageApi.MessageListener {
 
         for(PermissionRequestItem requestItem : request.getRequestItems()) {
             if(requestItem.isWearable()) {
-                if (mWearablePermissionToRequest == null)
-                    mWearablePermissionToRequest = requestItem;
+                mWearablePermissionsToRequest.add(requestItem);
             }
             else {
                 mCompanionPermissionsToRequest.add(requestItem);
@@ -89,25 +89,15 @@ public class PermissionsRequestor implements MessageApi.MessageListener {
     }
 
     private void requestNextPermission() {
-        if(mWearablePermissionToRequest != null) {
-            requestWearablePermission();
-        } else if(mCompanionPermissionsToRequest.size() > 0) {
-            requestCompanionPermissions(true);
-        } else {
-            checkComplete();
-        }
-    }
+        if(mWearablePermissionsToRequest.size() > 0) {
+            PermissionRequestItem request = mWearablePermissionsToRequest.get(0);
+            String permission = request.getPermissions().get(0);
+            mWearablePermissionsToRequest.remove(request);
 
-    /**
-     * If there is a wearable permission request, we assume it's just a single permission in the request item list.
-     */
-    private void requestWearablePermission() {
-        if(mWearablePermissionToRequest.getPermissions().size() > 0) {
-            String permission = mWearablePermissionToRequest.getPermissions().get(0);
-            
             if (mRequest.shouldRequestSilently()) {
                 if (ContextCompat.checkSelfPermission(mContext, permission) == PackageManager.PERMISSION_GRANTED) {
                     handleWearablePermissionGranted(permission);
+
                 } else {
                     handleWearablePermissionDenied(permission);
                 }
@@ -121,8 +111,10 @@ public class PermissionsRequestor implements MessageApi.MessageListener {
                     mContext.startActivity(i);
                 }
             }
+        } else if(mCompanionPermissionsToRequest.size() > 0) {
+            requestCompanionPermissions(true);
         } else {
-            mWearablePermissionToRequest = null;
+            checkComplete();
         }
     }
 
@@ -198,13 +190,11 @@ public class PermissionsRequestor implements MessageApi.MessageListener {
 
     private void handleWearablePermissionGranted(String permission) {
         mResponse.getWearablePermissionResults().put(permission, true);
-        mWearablePermissionToRequest = null;
         requestNextPermission();
     }
 
     private void handleWearablePermissionDenied(String permission) {
         mResponse.getWearablePermissionResults().put(permission, false);
-        mWearablePermissionToRequest = null;
         requestNextPermission();
     }
 
@@ -276,7 +266,7 @@ public class PermissionsRequestor implements MessageApi.MessageListener {
     }
 
     private void checkComplete() {
-        if(mWearablePermissionToRequest == null && mCompanionPermissionsToRequest.size() == 0) {
+        if(mWearablePermissionsToRequest.size() == 0 && mCompanionPermissionsToRequest.size() == 0) {
             if(mListener != null) {
                 killApiClient();
                 
