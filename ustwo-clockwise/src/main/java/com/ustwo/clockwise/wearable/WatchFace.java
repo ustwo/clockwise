@@ -184,6 +184,12 @@ public abstract class WatchFace extends WatchFaceService {
     }
 
     /**
+     * Lifecycle event guaranteed to be called once after {@link #onLayout(WatchShape, Rect, WindowInsets)}
+     * has been called for the first time.
+     */
+    protected void onLayoutCompleted() { }
+
+    /**
      * Override to perform view and logic updates. This will be called once per minute
      * ({@link WatchFace.WatchFaceEngine#onTimeTick()}) in
      * {@link WatchMode#AMBIENT} modes and once per {@link #getInteractiveModeUpdateRate()} in
@@ -446,6 +452,7 @@ public abstract class WatchFace extends WatchFaceService {
             // Start the time updater after the first layout is complete.
             if (!mLayoutComplete) {
                 mLayoutComplete = true;
+                onLayoutCompleted();
                 updateTimeAndInvalidate();
                 checkTimeUpdater();
             }
