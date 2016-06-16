@@ -34,6 +34,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.wearable.complications.ComplicationData;
 import android.support.wearable.watchface.WatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
 import android.text.format.DateFormat;
@@ -299,6 +300,13 @@ public abstract class WatchFace extends WatchFaceService {
         mWatchFaceEngine.checkTimeUpdater(updateRateMillis, delayUntilWholeSecond);
     }
 
+    public void setActiveComplications(int[] ids) {
+        mWatchFaceEngine.setActiveComplications(ids);
+    }
+
+    protected void onComplicationDataUpdate(int id, ComplicationData data) {
+    }
+
     @Override
     public WatchFaceService.Engine onCreateEngine() {
         Logr.v("WatchFace.onCreateEngine");
@@ -306,7 +314,7 @@ public abstract class WatchFace extends WatchFaceService {
         return mWatchFaceEngine;
     }
 
-    private class WatchFaceEngine extends WatchFaceService.Engine {
+    public class WatchFaceEngine extends WatchFaceService.Engine {
         private final ScheduledExecutorService mScheduledTimeUpdaterPool = Executors.newScheduledThreadPool(2);
         private ScheduledFuture<?> mScheduledTimeUpdater;
 
@@ -479,6 +487,11 @@ public abstract class WatchFace extends WatchFaceService {
                 updateTimeAndInvalidate();
             }
             checkTimeUpdater();
+        }
+
+        @Override
+        public void onComplicationDataUpdate(int id, ComplicationData data) {
+            WatchFace.this.onComplicationDataUpdate(id, data);
         }
 
         private class TimeFormatObserver extends ContentObserver {
