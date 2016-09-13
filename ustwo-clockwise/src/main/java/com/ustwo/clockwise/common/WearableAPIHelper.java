@@ -295,7 +295,7 @@ public class WearableAPIHelper {
                 new ResultCallback<NodeApi.GetLocalNodeResult>() {
                     @Override
                     public void onResult(NodeApi.GetLocalNodeResult getLocalNodeResult) {
-                        if(getLocalNodeResult != null) {
+                        if(getLocalNodeResult != null && getLocalNodeResult.getNode() != null) {
                             String localNode = getLocalNodeResult.getNode().getId();
                             Uri uri = new Uri.Builder()
                                     .scheme(PutDataRequest.WEAR_URI_SCHEME)
@@ -319,7 +319,7 @@ public class WearableAPIHelper {
                 new ResultCallback<NodeApi.GetLocalNodeResult>() {
                     @Override
                     public void onResult(NodeApi.GetLocalNodeResult getLocalNodeResult) {
-                        if(getLocalNodeResult != null) {
+                        if(getLocalNodeResult != null && getLocalNodeResult.getNode() != null) {
                             String localNode = getLocalNodeResult.getNode().getId();
                             Uri uri = new Uri.Builder()
                                     .scheme(PutDataRequest.WEAR_URI_SCHEME)
