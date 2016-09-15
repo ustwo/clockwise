@@ -295,13 +295,15 @@ public class WearableAPIHelper {
                 new ResultCallback<NodeApi.GetLocalNodeResult>() {
                     @Override
                     public void onResult(NodeApi.GetLocalNodeResult getLocalNodeResult) {
-                        String localNode = getLocalNodeResult.getNode().getId();
-                        Uri uri = new Uri.Builder()
-                                .scheme(PutDataRequest.WEAR_URI_SCHEME)
-                                .path(path)
-                                .authority(localNode)
-                                .build();
-                        getDataItem(uri, new DataItemResultCallback(callback));
+                        if(getLocalNodeResult != null && getLocalNodeResult.getNode() != null) {
+                            String localNode = getLocalNodeResult.getNode().getId();
+                            Uri uri = new Uri.Builder()
+                                    .scheme(PutDataRequest.WEAR_URI_SCHEME)
+                                    .path(path)
+                                    .authority(localNode)
+                                    .build();
+                            getDataItem(uri, new DataItemResultCallback(callback));
+                        }
                     }
                 }
         );
@@ -317,13 +319,15 @@ public class WearableAPIHelper {
                 new ResultCallback<NodeApi.GetLocalNodeResult>() {
                     @Override
                     public void onResult(NodeApi.GetLocalNodeResult getLocalNodeResult) {
-                        String localNode = getLocalNodeResult.getNode().getId();
-                        Uri uri = new Uri.Builder()
-                                .scheme(PutDataRequest.WEAR_URI_SCHEME)
-                                .path(path)
-                                .authority(localNode)
-                                .build();
-                        Wearable.DataApi.deleteDataItems(mGoogleApiClient, uri);
+                        if(getLocalNodeResult != null && getLocalNodeResult.getNode() != null) {
+                            String localNode = getLocalNodeResult.getNode().getId();
+                            Uri uri = new Uri.Builder()
+                                    .scheme(PutDataRequest.WEAR_URI_SCHEME)
+                                    .path(path)
+                                    .authority(localNode)
+                                    .build();
+                            Wearable.DataApi.deleteDataItems(mGoogleApiClient, uri);
+                        }
                     }
                 }
         );
