@@ -85,6 +85,11 @@ public class WatchFaceTime extends Time {
         this.millis = (int)(millis % 1000l);
     }
 
+    @Override
+    public long toMillis(boolean ignoreDst) {
+        return super.toMillis(ignoreDst) + millis;
+    }
+
     private void setHour12() {
         hour12 = (hour % 12);
     }
