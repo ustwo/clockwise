@@ -267,10 +267,12 @@ public abstract class WatchFace extends WatchFaceService {
         }
     }
 
-    private void updateTimeAndInvalidate() {
+    private void updateTimeAndInvalidate(boolean timeZoneChanged) {
         mPreviousTime.set(mLatestTime);
         mLatestTime.setToNow();
-        mLatestTime.timezone = TimeZone.getDefault().getID();
+        if (timeZoneChanged) {
+            mLatestTime.timezone = TimeZone.getDefault().getID();
+        }
 
         onTimeChanged(mPreviousTime, mLatestTime);
 
@@ -355,7 +357,8 @@ public abstract class WatchFace extends WatchFaceService {
         private final BroadcastReceiver mDateTimeChangedReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                updateTimeAndInvalidate();
+                boolean timeZoneChanged = Intent.ACTION_TIMEZONE_CHANGED.equals(intent.getAction());
+                updateTimeAndInvalidate(timeZoneChanged);
             }
         };
 
@@ -387,7 +390,7 @@ public abstract class WatchFace extends WatchFaceService {
         private final Runnable mTimeUpdater = new Runnable() {
             @Override
             public void run() {
-                updateTimeAndInvalidate();
+                updateTimeAndInvalidate(false);
             }
         };
 
@@ -409,7 +412,7 @@ public abstract class WatchFace extends WatchFaceService {
         public void onPeekCardPositionUpdate(Rect rect) {
             super.onPeekCardPositionUpdate(rect);
             onCardPeek(rect);
-            updateTimeAndInvalidate();
+            updateTimeAndInvalidate(false);
         }
 
         @Override
@@ -437,7 +440,7 @@ public abstract class WatchFace extends WatchFaceService {
                 mIsAmbient = inAmbientMode;
 
                 onWatchModeChanged(getCurrentWatchMode());
-                updateTimeAndInvalidate();
+                updateTimeAndInvalidate(false);
                 checkTimeUpdater();
             }
         }
@@ -461,7 +464,7 @@ public abstract class WatchFace extends WatchFaceService {
             if (!mLayoutComplete) {
                 mLayoutComplete = true;
                 onLayoutCompleted();
-                updateTimeAndInvalidate();
+                updateTimeAndInvalidate(false);
                 checkTimeUpdater();
             }
         }
@@ -473,7 +476,7 @@ public abstract class WatchFace extends WatchFaceService {
 
             // only update if layout has completed and time updater not running
             if (mLayoutComplete && !isTimeUpdaterRunning()) {
-                updateTimeAndInvalidate();
+                updateTimeAndInvalidate(false);
             }
         }
 
@@ -484,7 +487,7 @@ public abstract class WatchFace extends WatchFaceService {
             Logr.v("WatchFace.onVisibilityChanged: " + visible);
 
             if (visible) {
-                updateTimeAndInvalidate();
+                updateTimeAndInvalidate(false);
             }
             checkTimeUpdater();
         }
@@ -501,12 +504,12 @@ public abstract class WatchFace extends WatchFaceService {
 
             @Override
             public void onChange(boolean selfChange) {
-                updateTimeAndInvalidate();
+                updateTimeAndInvalidate(false);
             }
 
             @Override
             public void onChange(boolean selfChange, Uri uri) {
-                updateTimeAndInvalidate();
+                updateTimeAndInvalidate(false);
             }
         }
     }
